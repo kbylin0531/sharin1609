@@ -1,0 +1,94 @@
+<extend file="../Base/sticky_header_layout" />
+<block name="wrapper">
+    <div class="row">
+        <div class="col-md-12">
+            <!--statistics start-->
+            <script>
+
+                var panels = L.O.toObj('{$panels}');
+                console.log(panels);
+                var count = 0;
+                for(var i = 0;i < panels.length ; i++){
+                    if(count === 0){
+                        document.write('<div class="row state-overview">');
+                    }
+
+                    var panel = panels[i];
+                    var icon = panel.hasOwnProperty('icon')? panel.icon : 'certificate';
+                    var action = panel.hasOwnProperty('action')? panel.action : '';
+                    var title = panel.hasOwnProperty('title')? panel.title : 'Untitled';
+                    var color = panel.hasOwnProperty('color')? panel.color : 'purple';
+
+                    document.write('<div class="col-md-3 col-xs-6 col-sm-3" data-action="'+action+'">'+
+                            '<div class="panel '+color+' pcursor" >'+
+                            '<div class="symbol">'+
+                            '<i class="fa fa-'+icon+'"></i></div>'+
+                            '<div class="state-value"><div class="value">'+title+
+                            '</div><div class="title"></div></div></div></div>');
+
+                    if(count === 3){
+                        document.write('</div>');
+                        count = 0;
+                        continue;
+                    }
+                    count ++;
+                }
+            </script>
+            <!--statistics end-->
+        </div>
+        <!--<div class="col-md-12">-->
+            <!--&lt;!&ndash;more statistics box start&ndash;&gt;-->
+            <!--<div class="panel deep-purple-box">-->
+                <!--<div class="panel-body">-->
+                    <!--<div class="row">-->
+                        <!--<div class="col-md-5 col-sm-5">-->
+                            <!--<div id="graph-donut" class="revenue-graph"></div>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-7 col-sm-7">-->
+                            <!--<ul class="bar-legend">-->
+                                <!--<li><span class="blue"></span> Open rate</li>-->
+                                <!--<li><span class="green"></span> Click rate</li>-->
+                                <!--<li><span class="purple"></span> Share rate</li>-->
+                                <!--<li><span class="red"></span> Unsubscribed rate</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;more statistics box end&ndash;&gt;-->
+        <!--</div>-->
+    </div>
+
+
+</block>
+<block name="style">
+    <!--Morris Chart CSS -->
+    <!--<link rel="stylesheet" href="__PUBLIC__/admin//js/morris-chart/morris.css">-->
+</block>
+<block name="script">
+    <!--Morris Chart-->
+    <!--<script src="__PUBLIC__/admin//js/morris-chart/morris.js"></script>-->
+    <!--<script src="__PUBLIC__/admin//js/morris-chart/raphael-min.js"></script>-->
+    <script>
+        // Use Morris.Area instead of Morris.Line
+//        Morris.Donut({
+//            element: 'graph-donut',
+//            data: [
+//                { value: 40, label: 'New Visit', formatted: 'at least 70%' },
+//                { value: 30, label: 'Unique Visits', formatted: 'approx. 15%' },
+//                { value: 20, label: 'Bounce Rate', formatted: 'approx. 10%' },
+//                { value: 10, label: 'Up Time', formatted: 'at most 99.99%' }
+//            ],
+//            backgroundColor: false,
+//            labelColor: '#fff',
+//            colors: [ '#4acacb','#6a8bc0','#5ab6df','#fe8676'],
+//            formatter: function (x, data) { return data.formatted; }
+//        });
+
+        $("div.state-overview>div").click(function () {
+            var href =$(this).attr("data-action");
+            href && L.E.redirect(href);
+        });
+    </script>
+</block>
+
