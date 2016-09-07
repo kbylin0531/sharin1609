@@ -7,7 +7,7 @@
  */
 
 namespace App\Admin\Model;
-use Pindex\Core\Model;
+use Sharin\Core\Model;
 
 class AuthModel extends Model {
 

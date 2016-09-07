@@ -7,7 +7,7 @@
  */
 
 namespace App\Admin\Model;
-use Pindex\Core\Model;
+use Sharin\Core\Model;
 
 class WebsiteModel extends Model {
 
@@ -80,10 +80,8 @@ class WebsiteModel extends Model {
     }
 
 //---------------------------------------- for management -------------------------------------------------------------------------------//
-
     public function revise(){
 
     }
-
 
 }

@@ -7,7 +7,7 @@
  */
 namespace Sharin\Core;
 use Sharin\Developer;
-use Sharin\Exceptions\ParameterInvalidExceptiion;
+use Sharin\Exceptions\ParameterInvalidException;
 use Sharin\Library\Helper\XMLer;
 
 class Response {
@@ -152,7 +152,7 @@ class Response {
                 header('Content-Type:text/plain; charset=utf-8');
                 exit($data);
             default:
-                throw new ParameterInvalidExceptiion('Invalid output type!');
+                throw new ParameterInvalidException('Invalid output type!');
         }
     }
 

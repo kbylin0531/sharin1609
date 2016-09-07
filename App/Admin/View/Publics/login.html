@@ -65,9 +65,6 @@
 </div>
 
 
-<!-- Placed js at the end of the document so the pages load faster -->
-
-<!-- Placed js at the end of the document so the pages load faster -->
 <include file="../Base/Public/section_script"/>
 <script>
     var error = "{$error}";
@@ -76,7 +73,7 @@
     $("#form").on("submit",function () {
         passwd.val(L.md5(L.sha1(passwd.val())));
         return true;
-    })
+    });
 </script>
 
 </body>

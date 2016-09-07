@@ -9,6 +9,7 @@
 namespace App\Admin\Controller;
 use App\Admin\Model\MemberModel;
 use Sharin\Core\Controller;
+use Sharin\Core\Logger;
 use Sharin\Extension\Loginout;
 
 class Publics extends Controller{
@@ -24,14 +25,11 @@ class Publics extends Controller{
             }else{
                 $result = Loginout::login($username,$passwd,MemberModel::getInstance());
                 $remember and Loginout::remember(ONE_WEEK);
-//                \Pindex\println([
-//                    $result,
-//                    Loginout::check(),
-//                ],true);
                 if($result){
+                    echo 'redirect';
                     $this->redirect('/Admin/Index/index');
                 }else{
-                    Logger::write([$result,$username,$passwd,'login failed']);
+                    Logger::record([$result,$username,$passwd,'login failed']);
                 }
                 $error = $result;
             }

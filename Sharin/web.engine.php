@@ -13,7 +13,7 @@ namespace {
     use Sharin\Core\Dispatcher;
     use Sharin\Core\Router;
     use Sharin\Developer;
-    use Sharin\Exceptions\ParameterInvalidExceptiion;
+    use Sharin\Exceptions\ParameterInvalidException;
     use Sharin\Exceptions\RouteParseFailedException;
     use Sharin\SharinException;
 
@@ -57,7 +57,7 @@ namespace {
          * initize the behaviour of this system
          * @param array $config system configuration
          * @return void
-         * @throws ParameterInvalidExceptiion
+         * @throws ParameterInvalidException
          */
         public static function init(array $config=NONE_CONFIG){
             static $needs = true;
@@ -168,7 +168,7 @@ namespace Sharin {
     use Sharin\Core\Configger;
     use Sharin\Core\Response;
     use Sharin\Core\Trace;
-    use Sharin\Exceptions\ParameterInvalidExceptiion;
+    use Sharin\Exceptions\ParameterInvalidException;
 
     /**
      * Class Utils
@@ -529,7 +529,7 @@ namespace Sharin {
          * @param string $tag 方法名（标签名）
          * @param Mixed $params 方法的参数
          * @return mixed
-         * @throws ParameterInvalidExceptiion
+         * @throws ParameterInvalidException
          */
         private static function exec($callableorclass, $tag , $params = null) {
             static $_instances = [];
@@ -544,7 +544,7 @@ namespace Sharin {
                 if(!is_callable([$obj, $tag])) $tag = 'run';//tag默认是方法名称
                 return $obj->$tag($params,$tag);
             }
-            throw new ParameterInvalidExceptiion($callableorclass,['Closure','string']);
+            throw new ParameterInvalidException($callableorclass,['Closure','string']);
         }
     }
 
@@ -767,7 +767,7 @@ namespace Sharin {
          * @param string $clsnm class name ,it will always be driver name if value set to re-null
          * @param string|int $identify Instance identify
          * @return object
-         * @throws ParameterInvalidExceptiion
+         * @throws ParameterInvalidException
          */
         public static function getInstance($config=null,$clsnm=USE_DEFAULT,$identify=null){
             $clsnm === null and $clsnm = static::class;
@@ -785,7 +785,7 @@ namespace Sharin {
                         $identify = 0;
                         break;
                     default:
-                        throw new ParameterInvalidExceptiion($config);
+                        throw new ParameterInvalidException($config);
                 }
             }
 
@@ -800,7 +800,7 @@ namespace Sharin {
          * @param array|int|float|string|null $config it will convered to identify
          * @param string $clsnm class name ,it will always be driver name if value set to re-null
          * @return bool
-         * @throws ParameterInvalidExceptiion
+         * @throws ParameterInvalidException
          */
         public static function hasInstance($config=null,$clsnm=USE_DEFAULT){
             isset($clsnm) or $clsnm = static::class;
@@ -822,7 +822,7 @@ namespace Sharin {
                     $identify = 0;
                     break;
                 default:
-                    throw new ParameterInvalidExceptiion($config);
+                    throw new ParameterInvalidException($config);
             }
             return isset(self::$_is[$clsnm][$identify]);
         }

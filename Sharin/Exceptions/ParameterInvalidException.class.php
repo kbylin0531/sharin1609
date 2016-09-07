@@ -12,7 +12,7 @@ namespace Sharin\Exceptions;
 
 use Sharin\SharinException;
 
-class ParameterInvalidExceptiion extends SharinException
+class ParameterInvalidException extends SharinException
 {
 
 }

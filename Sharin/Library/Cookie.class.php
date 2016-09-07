@@ -6,7 +6,6 @@
  * Date: 16-9-3
  * Time: 下午6:35
  */
-
 namespace Sharin\Library;
 use Sharin\C;
 

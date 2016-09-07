@@ -9,6 +9,7 @@
 
 namespace Sharin\Library;
 use Sharin\C;
+use Sharin\Exceptions\ParameterInvalidException;
 
 
 /**
@@ -343,6 +344,7 @@ class Session {
      * 清除指定名称的session
      * @param string|array $name 如果为null将清空全部
      * @return bool
+     * @throws ParameterInvalidException
      */
     public static function delete($name){
         if(is_string($name)){
@@ -357,7 +359,7 @@ class Session {
                 self::delete($val);
             }
         }else{
-            SharinException::throwing($name);
+            throw new ParameterInvalidException($name);
         }
         return true;
     }

@@ -85,7 +85,7 @@ class Controller {
      * @param object $parent     next higher level of Smarty variables（参照Smarty）
      * @return void
      */
-    protected function display($template = null, $cache_id = null, $compile_id = null, $parent = null){
+    final protected function display($template = null, $cache_id = null, $compile_id = null, $parent = null){
         null === static::$_context and static::fetchContext();
         //未设置时使用调用display的函数名称
         if(null === $template){//如果未设置参数一,获取当前调用方法的名称作为模板的默认名称
