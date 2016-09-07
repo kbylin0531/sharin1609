@@ -6,10 +6,10 @@
  * Time: 4:03 PM
  */
 
-namespace App\Publisher\Library\Member;
-use App\Publisher\Library\Member;
-use App\Publisher\Library\Utils\HttpRequest;
-use App\Publisher\Library\Utils\Jsdati;
+namespace App\Pube\Library\Member;
+use App\Pube\Library\Member;
+use App\Pube\Library\Utils\HttpRequest;
+use App\Pube\Library\Utils\Jsdati;
 use Sharin\Developer;
 use Exception;
 /**
@@ -119,38 +119,6 @@ class EC21Member extends Member {
             exit('HHHHHHHHHHHHHHHHHHHHHHHHHHH');
         }
 
-        $data = [
-            'FBIn'=>'',
-            'actionName'=>'insert',
-            'another'=>'',
-            'another2'=>'',
-            'captchaState'=>$code,
-            'checkedEmail'=>'linzhv@qq.com',
-            'chk_ids'=>'Y',
-            'comp_nm'=>$username.' Corporation',
-            'contact_nm'=>$username,
-            'contact_sex'=>'M',
-            'country'=>'CN',
-            'email'=>$email,
-            'fEmail'=>'',
-            'gubun'=>'S',
-            'gubuns'=>'S',
-            'inKn'=>'',
-            'isValidEmail'=>'true',
-            'languageSelect'=>'chinese',
-            'languageSelect1'=>'chinese',
-            'mPlan'=>'N',
-            'mType'=>'T',
-            'member_id'=>$username,
-            'noSite'=>'N',
-            'passwd'=>$username,
-            're_passwd'=>$username,
-            'reg_class'=>'F',
-            'siteName'=>'',
-            'tel1_no'=>'86',
-            'tel2_no'=>substr($phone,0,3),
-            'tel3_no'=>substr($phone,3),
-        ];
         $return = HttpRequest::post($this->register_address,$data,null,true);
         echo '<pre>';
         var_dump($this->register_address,$data);

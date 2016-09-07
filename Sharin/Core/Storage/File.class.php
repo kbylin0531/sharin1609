@@ -18,7 +18,10 @@ class File implements StorageInterface {
         'READ_LIMIT_ON'     => true,
         'WRITE_LIMIT_ON'    => true,
         'READABLE_SCOPE'    => SR_PATH_BASE,
-        'WRITABLE_SCOPE'    => SR_PATH_RUNTIME,
+        'WRITABLE_SCOPE'    => [
+            SR_PATH_RUNTIME,
+            SR_PATH_BASE.'/Public/dynamic/'
+        ],
     ];
 
     public function __construct(array $config=null){

@@ -6,7 +6,7 @@
  * Time: 4:20 PM
  */
 
-namespace App\Publisher\Library;
+namespace App\Pube\Library;
 
 class Common
 {
@@ -47,7 +47,7 @@ class Common
         return false === $content ? '': (string)$content;
     }
 
-    public static function post($url,$fields,$inputcookie,$outputcookie,$withhead=false){
+    public static function post($url,$fields,$inputcookie,$outputcookie,$withhead=false,array $other=[]){
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, $withhead); //将头文件的信息作为数据流输出
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
@@ -64,6 +64,9 @@ class Common
             }
             curl_setopt($ch, CURLOPT_COOKIEFILE, $outputcookie);
             curl_setopt($ch, CURLOPT_COOKIEJAR, $outputcookie);
+        }
+        foreach ($other as $k=>$v){
+            curl_setopt($ch,$k,$v);
         }
         $content = curl_exec($ch);
         curl_close($ch);

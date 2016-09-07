@@ -6,11 +6,11 @@
  * Time: 4:13 PM
  */
 
-namespace App\Publisher\Library;
+namespace App\Pube\Library;
 
 /**
  * Class MemberRigister 會員註冊器
- * @package App\Publisher\Library
+ * @package App\Pube\Library
  */
 abstract class MemberRigister extends Common{
 

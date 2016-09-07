@@ -6,7 +6,7 @@
  * Time: 3:51 PM
  */
 
-namespace App\Publisher\Library;
+namespace App\Pube\Library;
 
 abstract class Member {
 

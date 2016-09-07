@@ -6,7 +6,7 @@
  * Time: 4:06 PM
  */
 
-namespace App\Publisher\Library\Utils;
+namespace App\Pube\Library\Utils;
 
 class Jsdati {
 
@@ -28,7 +28,6 @@ class Jsdati {
 
     /**
      * 验证码上传函数
-     *
     0	四个字母,数字	1个验证码(1分钱)
     1	2位中文汉字	1个验证码(2分钱)
     2	选择题	1个验证码(1分钱)
