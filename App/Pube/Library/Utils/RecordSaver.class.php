@@ -16,7 +16,7 @@ if(empty($GLOBALS['records'])){
 class RecordSaver {
 
     public static function set($key,$val){
-        $GLOBALS['records'][$key] = [
+        $key and $GLOBALS['records'][$key] = [
             'value' => $val,
             'count' => 0,
         ];

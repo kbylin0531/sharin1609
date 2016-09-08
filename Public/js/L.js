@@ -4,7 +4,6 @@
  *  ① querySelector() 方法仅仅返回匹配指定选择器的第一个元素。如果你需要返回所有的元素，请使用 querySelectorAll() 方法替代。
  */
 /*!art-template - Template Engine | http://aui.github.com/artTemplate/*/
-
 window.L = (function () {
     //开启严格模式节约时间
     "use strict";
@@ -28,6 +27,17 @@ window.L = (function () {
      * @private
      */
     var ScriptLib = [];
+    /**
+     * 插件加载队列
+     * @type {Array}
+     */
+    var PluginQuene = [];
+    /**
+     * 標記頁面是否家在完畢
+     * @type {boolean}
+     */
+    var pagedone = false;
+
 
     //常见的兼容性问题处理
     (function () {
@@ -549,6 +559,13 @@ window.L = (function () {
      * @type {{}}
      */
     var O = {
+        /**
+         * check if key exist and the value is not empty
+         * @param optname property name
+         * @param obj target object to check
+         * @param dft default if not exist
+         * @returns {*}
+         */
         notempty:function(optname,obj,dft){
             return obj?(obj.hasOwnProperty(optname) && obj[optname]):(dft || false);
         },
@@ -574,6 +591,9 @@ window.L = (function () {
          */
         isArr: function (el) {
             return Object.prototype.toString.call(el) === '[object Array]';
+        },
+        isStr:function (el) {
+            return Object.prototype.toString.call(el) === '[object String]';
         },
         /**
          * 判断元素是否是一个函数
@@ -787,6 +807,7 @@ window.L = (function () {
             window.document.onreadystatechange = null;
             for (var i = 0; i < ReadyStack.length; i++) (ReadyStack[i])();
         }
+        pagedone = true;
     };
 
     return {
@@ -800,6 +821,9 @@ window.L = (function () {
             if (o === undefined) return "Undefined";
             return Object.prototype.toString.call(o).slice(8, -1).toLowerCase();
         },
+        isPageDone:function () {
+            return pagedone;
+        },
         jq: jq,
         sha1: sha1,//sha1加密
         md5: md5,//md5加密
@@ -808,22 +832,24 @@ window.L = (function () {
         /**
          * load resource for page
          * @param path like '/js/XXX.YY' which oppo to public_url
-         * @param type
-         * @param cb callback
+         * @param type file type
+         * @param call callback
          * @returns {Window.L}
          */
-        load: function (path, type,cb) {
-            if (O.isArr(path) || O.isObj(path)) {
+        load: function (path, type, call) {
+            if (O.isArr(path)) {
                 var env = this;
-                U.each(path,function (val,i) {/* is array */
-                    env.load(val,null,function () {
-                        //callback if all plugin finished loading
-                        (++i == path.length) && cb && cb();
-                    });
+                var len = path.length;
+                U.each(path,function (p,i) {
+                    if(len == (i+1)){
+                        env.load(p,null,call);
+                    }else{
+                        env.load(p);
+                    }
                 });
             } else {
                 if (!type) {
-                    var t = path.substring(path.length - 3);//根据后缀自动判断类型
+                    var t = path.substring(path.length - 3);//auto get by suffix
                     switch (t) {
                         case 'css':
                             type = 'css';
@@ -835,37 +861,50 @@ window.L = (function () {
                             type = 'ico';
                             break;
                         default:
-                            console.log("加载了错误的类型'" + t + "',加载的类型必须是[css,js,ico]");
+                            console.log("wrong type'" + t + "',it must be[css,js,ico]");
                     }
                 }
                 //本页面加载过将不再重新载入
-                for (var i = 0; i < ScriptLib.length; i++)
+                for (var i = 0; i < ScriptLib.length; i++){
                     if (ScriptLib[i] === path) {
-                        cb && cb();
                         return this;
                     }
+                }
                 //现仅仅支持css,js,ico的类型
+                //注意的是，直接使用document.write('<link .....>') 可能導致html頁面混亂。。。
                 switch (type) {
                     case 'css':
-                        document.write('<link href="' + pathen(path) + '" rel="stylesheet" type="text/css" />');
+                        L.loadStyle( pathen(path) );
                         break;
                     case 'js':
-                        L.loadScript(pathen(path),cb);
+                        L.loadScript(pathen(path),call);
                         ScriptLib.push(path);
                         break;
                     case 'ico':
-                        document.write('<link rel="shortcut icon" href="' + pathen(path) + '" />');
+                        L.loadIcon( pathen(path) );
                         break;
                 }
-                //记录已经加载过的
-                ScriptLib.push(path);
             }
             return this;
         },
+        loadIcon:function(path){
+            var link = document.createElement('link');
+            link.href = path;
+            link.rel = "shortcut icon";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        },
+        loadStyle:function (path) {
+            var link = document.createElement('link');
+            link.href = path;
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        },
         loadScript: function (url, callback){
-            var script = document.createElement ("script");
+            var script = document.createElement("script");
             script.type = "text/javascript";
             script.src = url;
+            document.getElementsByTagName("head")[0].appendChild(script);
             if (script.readyState){ //IE
                 script.onreadystatechange = function(){
                     if (script.readyState == "loaded" || script.readyState == "complete"){
@@ -874,9 +913,10 @@ window.L = (function () {
                     }
                 };
             } else { //Others
-                callback && (script.onload = callback);
+                if(callback){
+                    script.onload = callback;
+                }
             }
-            document.getElementsByTagName("head")[0].appendChild(script);
         },
         cookie: {
             /**
@@ -887,7 +927,6 @@ window.L = (function () {
              * @param path
              */
             set: function (name, value, expire, path) {
-                // console.log(name, value, expire,path);
                 path = ";path=" + (path ? path : '/');// all will access if not set the path
                 var cookie;
                 if (undefined === expire || false === expire) {
@@ -928,7 +967,7 @@ window.L = (function () {
             if (!target) target = options;
             U.each(config, function (item, key) {
                 if(cover || (cover === undefined) ||  target.hasOwnProperty(key)){
-                    (target[key] = item);
+                    target[key] = item;
                 }
             });
             return this;
@@ -991,18 +1030,32 @@ window.L = (function () {
         },
         //plugins
         P: {
-            //plugin autoload start
-            JsMap:{},
-            jsMap:function (option) {
-                if(O.isObj(option)) L.init(option,this.JsMap,true);
-                else return option?(O.notempty(option,this.JsMap)?this.JsMap[option]:null):this.JsMap;
+            _jq:null, //jquery object
+            JsMap:{},//plugin autoload start
+            /**
+             * import plugins
+             * @param option
+             * @returns {*}
+             */
+            import:function (option) {
+                L.init(option,this.JsMap,true);
             },
-            _jq:null,
-            loadLib:function(plugin,callback){
-                L.load(this.JsMap[plugin],null,callback);
+            get:function (name,dft) {
+                return name?(O.notempty(name,this.JsMap) ? this.JsMap[name] : (dft || false)):this.JsMap;
+            },
+            load:function(name,call){
+                if(name in this.JsMap){
+                    name = this.JsMap[name];
+                }
+                if(pagedone){
+                    /* it will not put into quene if page has load done！ */
+                    L.load(name,null,call);
+                }else{
+                    PluginQuene.push([name,call]);
+                }
+                return L.P;
             },
             /**
-             *
              * @param selector
              * @param options
              * @param functionName
@@ -1010,19 +1063,15 @@ window.L = (function () {
              * @param callback callback while on loaded
              */
             initlize:function(selector,options,functionName,pluginName,callback){
-                options || (options = {});
                 pluginName = pluginName?pluginName:functionName;
                 var jq = this._jq?this._jq:(this._jq = $());
-                // console.log(this.JsMap,pluginName,this.JsMap[pluginName])
                 L.load(this.JsMap[pluginName],null,function () {
-                    // console.log(L.O.isObj(selector),selector instanceof jQuery);
                     if(!L.O.isObj(selector) || (selector instanceof jQuery)){
-                        //for single:it must be called when last is finished
                         selector = $(selector);
+                        options || (options = {});
                         (functionName in jq) && (jq[functionName]).apply(selector,O.isArr(options)?options:[options]);
                         callback && callback(selector);
                     }else{
-                        //for batch setting,key as selector,value as max
                         var list = [];
                         L.U.each(selector,function (params,k) {
                            list.push( k = $(k));
@@ -1034,14 +1083,32 @@ window.L = (function () {
             }
         },
         //variable
-        V: {}//constant or config// judge
+        V: {},//constant or config// judge
+        PluginQuene:PluginQuene
+
     };
 })();
 // 加密测试
 // console.log(L.md5(L.sha1('123456')) === 'd93a5def7511da3d0f2d171d9c344e91');
 
+//插件加载(按序進行)
+L.ready(function () {
+    var len = L.PluginQuene.length;
+    var loadQuene = function (i) {
+        if(i < len){
+            L.load(L.PluginQuene[i][0],null,function () {
+                var call = L.PluginQuene[i][1];
+                call && call();
+                loadQuene(++i);
+            });
+        }
+    };
+    loadQuene(0);
+});
 
-
+/**
+ * 模板引擎
+ */
 !(function () {
     /**
      * 模板引擎
@@ -1422,7 +1489,7 @@ window.L = (function () {
 
         var mainCode = replaces[0];
 
-        var footerCode = "return new String(" + replaces[3] + ");"
+        var footerCode = "return new String(" + replaces[3] + ");";
 
         // html与逻辑语法分离
         forEach(source.split(openTag), function (code) {
@@ -1588,11 +1655,8 @@ window.L = (function () {
 
 
             });
-
             return code + "\n";
         }
-
-
     }
     //原先還有nidejs和seajs的支持
     this.template = template;

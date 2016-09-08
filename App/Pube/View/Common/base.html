@@ -3,10 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Hello Pube</title>
+    <script src="__PUBLIC__/js/L.js"></script>
+    <script>
+        L.init({
+            public_url:"__PUBLIC__"
+        }).P.import({
+            'jq':'/js/jquery.min.js',
+            'bs':[
+                '/plugins/bootstrap337/css/bootstrap.min.css',
+                '/plugins/bootstrap337/js/bootstrap.min.js'
+            ],
+            'dt':[
+                '/plugins/datatables/media/css/dataTables.bootstrap.min.css',
+
+                '/plugins/datatables/media/js/jquery.dataTables.min.js',
+                '/plugins/datatables/media/js/dataTables.bootstrap.min.js'
+            ],
+            'mydt': '/js/L/datatables.js',
+            'layer':'/plugins/layer24/layer.js'
+        });
+    </script>
 </head>
 <body>
-
 <block name="body"></block>
-
 </body>
+<block name="script"></block>
 </html>

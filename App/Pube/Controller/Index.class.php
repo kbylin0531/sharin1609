@@ -12,9 +12,8 @@ Ngine::init();
 class Index extends Controller{
 
     public function index(){
-
+        $this->assign('data',json_encode(array_values(RecordSaver::get())));
         $this->display();
-
     }
 
     public function showList(){
@@ -43,15 +42,16 @@ class Index extends Controller{
 
             $image = $register->saveImage('',$childId);
             $image = SR_PUBLIC_URL.'/'.$image;
-            echo "<img src='{$image}' />";
             echo <<< endline
-        <form action="{$_SERVER['REQUEST_URI']}" method="get">
-            <label>Code:</label>
-            <input name="code" type="text">
-            <label>Email:</label>
-            <input name="email" type="text">
-            <input type="submit" value="submit">
-        </form>
+<form action="{$_SERVER['REQUEST_URI']}" method="get">
+    <label>www.ec21.com</label><br>
+    <img src='{$image}' />
+    <label>Code:</label>
+    <input name="code" type="text">
+    <label>Email:</label>
+    <input name="email" type="text">
+    <input type="submit" value="submit">
+</form> 
 endline;
         }
     }

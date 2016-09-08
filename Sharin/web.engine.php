@@ -1,8 +1,8 @@
 <?php
 /**
  * Powered by linzhv@qq.com.
- * Github: git@github.com:linzongho/sharin.git
- * User: root
+ * Github: git@github.com:linzongho/sharin2.git
+ * User: lich4ung
  * Date: 16-9-3
  * Time: 上午10:48
  */
@@ -106,7 +106,6 @@ namespace {
             //URL中解析结果合并到$_GET中，$_GET的其他参数不能和之前的一样，否则会被解析结果覆盖,注意到$_GET和$_REQUEST并不同步，当动态添加元素到$_GET中后，$_REQUEST中不会自动添加
             $rq_params = $router->getParameters();
             $rq_params and $_GET = array_merge($_GET,$rq_params);
-
 
             Behaviour::listen(ON_CHECK);
             //dispatch
