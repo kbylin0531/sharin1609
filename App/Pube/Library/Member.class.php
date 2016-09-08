@@ -6,7 +6,7 @@
  * Time: 3:51 PM
  */
 
-namespace App\Pube\Library;
+namespace Library;
 
 abstract class Member {
 
@@ -93,7 +93,7 @@ abstract class Member {
      * @throws \Exception cookie目录不存在或者不可写时抛出异常
      */
     public function getCookie(){
-        $cookie = PATH_COOKIE.$this->getIdentify().'.cookie.txt';
+        $cookie = PUBE_COOKIE_DIR.$this->getIdentify().'.cookie.txt';
         $dir = dirname($cookie);
         if(!is_dir($dir)){
             if(!mkdir($dir,0777,true)){

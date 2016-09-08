@@ -6,8 +6,8 @@
  * Time: 4:07 PM
  */
 
-namespace App\Pube\Library;
-use App\Pube\Library\Utils\HttpRequest;
+namespace Library;
+use Library\Utils\HttpRequest;
 use Exception;
 abstract class Product {
     /**

@@ -1,34 +1,39 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lich4ung
- * Date: 9/7/16
- * Time: 3:49 PM
- */
-
 namespace App\Pube\Controller;
-use App\Pube\Library\MemberRegister\EC21MemberRegister;
+use Library\MemberRegister\EC21MemberRegister;
+use Library\Ngine;
+use Library\Utils\RecordSaver;
+use Sharin\Core\Controller;
 use Sharin\Library\Session;
 
-defined('PATH_COOKIE') or define('PATH_COOKIE',SR_PATH_APP,'/Pube/Data/Cookie/');
-class Index {
+include_once dirname(__DIR__).'/Library/Ngine.class.php';
+Ngine::init();
+
+class Index extends Controller{
 
     public function index(){
 
+        $this->display();
+
     }
 
-    public function testRigister($code=''){
+    public function showList(){
+        echo '<pre>';
+        var_export(RecordSaver::get());
+    }
+
+    public function testRigister($code='',$email=''){
         $register = new EC21MemberRegister();
-        $urlbase = dirname($_SERVER['SCRIPT_NAME']);
         if($code){
             $code = $register->postCode($code,Session::get('childId'));
 
-            $content = $register->register($code);
-            if(false === $content){
-                echo "failed to register!  <a href='{$urlbase}/index.php/Pube/Index/testRigister'>$code</a>";
-            }else{
-                echo $content;
-            }
+            $info = $register->setCapture($code)->setEmail($email)->register();
+
+            echo " <a href='".SR_SCRIPT_URL."/Pube/Index/testRigister'>继续注册</a><pre>";
+            var_dump($info);
+            RecordSaver::set($info['username'],$info);
+
+            echo $register->update()? 'Y':'N';
         }else{
             $register->getRegisterPage();
             $register->getFramePage();
@@ -37,11 +42,14 @@ class Index {
             Session::set('childId',$childId);
 
             $image = $register->saveImage('',$childId);
-            $image = $urlbase.'/'.$image;
+            $image = SR_PUBLIC_URL.'/'.$image;
             echo "<img src='{$image}' />";
             echo <<< endline
         <form action="{$_SERVER['REQUEST_URI']}" method="get">
+            <label>Code:</label>
             <input name="code" type="text">
+            <label>Email:</label>
+            <input name="email" type="text">
             <input type="submit" value="submit">
         </form>
 endline;

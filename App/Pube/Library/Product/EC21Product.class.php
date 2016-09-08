@@ -6,11 +6,10 @@
  * Time: 4:08 PM
  */
 
-namespace App\Pube\Library\Product;
-use App\Pube\Library\Member;
-use App\Pube\Library\Utils\HttpRequest;
+namespace Library\Product;
+use Library\Member;
 use Exception;
-use App\Pube\Library\Product;
+use Library\Product;
 use Sharin\Developer;
 
 class EC21Product extends Product{

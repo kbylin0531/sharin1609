@@ -31,14 +31,14 @@ const ACTION_CREATE = 1;//添加操作,将使用到$_fields字段
 const ACTION_UPDATE = 2;//更新操作,将使用到$_fields和$_where字段
 const ACTION_DELETE = 3;//删除操作,将使用到$_where字段
 
-if(PHP_SAPI === 'cli') {include 'console.engine.php';exit;}//console.engine will do something different from web.engin
+if(PHP_SAPI === 'cli') {include realpath(__DIR__.'/../console.engine.php');exit;}//console.engine will do something different from web.engin
 
 define('SR_IS_WIN',false !== stripos(PHP_OS, 'WIN'));//const IS_WINDOWS = PHP_OS === 'WINNT';
 defined('SR_DEBUG_MODE_ON') or define('SR_DEBUG_MODE_ON', true);
 defined('SR_PAGE_TRACE_ON') or define('SR_PAGE_TRACE_ON', true);//在处理微信签名检查时会发生以外的错误
 
-define('SR_NOW_MICRO', $_SERVER['REQUEST_TIME_FLOAT']);//(int)($_SERVER['REQUEST_TIME_FLOAT']*1000)//isset($_SERVER['REQUEST_TIME_FLOAT'])? $_SERVER['REQUEST_TIME_FLOAT']:microtime(true)
-define('SR_NOW',$_SERVER['REQUEST_TIME']);
+define('SR_NOW_MICRO',  $_SERVER['REQUEST_TIME_FLOAT']);//(int)($_SERVER['REQUEST_TIME_FLOAT']*1000)//isset($_SERVER['REQUEST_TIME_FLOAT'])? $_SERVER['REQUEST_TIME_FLOAT']:microtime(true)
+define('SR_NOW',        $_SERVER['REQUEST_TIME']);
 define('SR_IS_AJAX',    ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtoupper($_SERVER['HTTP_X_REQUESTED_WITH']) == 'XMLHTTPREQUEST') ));
 define('SR_IS_POST',    strtoupper($_SERVER['REQUEST_METHOD']) === 'POST');//“GET”, “HEAD”，“POST”，“PUT”
 define('SR_IS_HTTPS',   isset ($_SERVER ['HTTPS']) and $_SERVER ['HTTPS'] === 'on');
@@ -46,7 +46,7 @@ define('SR_HTTP_PREFIX',SR_IS_HTTPS ? 'https://' : 'http://' );
 
 $script_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']),'/');
 define('SR_PUBLIC_URL',SR_HTTP_PREFIX.$_SERVER['SERVER_NAME'].((80 == $_SERVER['SERVER_PORT'])? $script_dir : ":{$_SERVER['SERVER_PORT']}{$script_dir}"));
-
+define('SR_SCRIPT_URL',SR_PUBLIC_URL.'');
 define('SR_PATH_BASE', dirname(dirname(__DIR__)));
 const SR_PATH_FRAMEWORK = SR_PATH_BASE.'/Sharin';
 const SR_PATH_CONFIG    = SR_PATH_BASE.'/Config';

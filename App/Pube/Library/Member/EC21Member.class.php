@@ -6,10 +6,10 @@
  * Time: 4:03 PM
  */
 
-namespace App\Pube\Library\Member;
-use App\Pube\Library\Member;
-use App\Pube\Library\Utils\HttpRequest;
-use App\Pube\Library\Utils\Jsdati;
+namespace Library\Member;
+use Library\Member;
+use Library\Utils\HttpRequest;
+use Library\Utils\Jsdati;
 use Sharin\Developer;
 use Exception;
 /**
@@ -42,7 +42,7 @@ class EC21Member extends Member {
 
     public function __construct($username, $password, $verifycode=''){
         parent::__construct($username, $password, $verifycode);
-        $this->loginrecord = PATH_COOKIE.'ec21.record.php';
+        $this->loginrecord = PUBE_COOKIE_DIR.'ec21.record.php';
     }
 
     /**
@@ -147,8 +147,8 @@ class EC21Member extends Member {
         $time2 = $time + 3;
         $apiserver = 'http://api.solvemedia.com';
         $img_path = $requestid.'ec21.gif';
-        $cookie_path =  PATH_COOKIE.'/'.$time.'ec21.cookie';
-        $cookie2_path =  PATH_COOKIE.'/ec21page.cookie';
+        $cookie_path =  PUBE_COOKIE_DIR.'/'.$time.'ec21.cookie';
+        $cookie2_path =  PUBE_COOKIE_DIR.'/ec21page.cookie';
         $magic_url = $apiserver.'/papi/challenge.script?k=9PRRNhB78ykeJvMH-fDB-ypgIsmsdvyB';
         $encode_url = 'http://www.ec21.com/global/captcha/captchaSubmit.jsp';//图片验证处理地址
 

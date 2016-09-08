@@ -6,9 +6,8 @@
  * Time: 4:15 PM
  */
 
-namespace App\Pube\Library\MemberRegister;
-use App\Pube\Library\MemberRigister;
-use Sharin\Core\Storage;
+namespace Library\MemberRegister;
+use Library\MemberRigister;
 
 class EC21MemberRegister extends MemberRigister {
     /**
@@ -19,13 +18,16 @@ class EC21MemberRegister extends MemberRigister {
      * @var string
      */
     private $register_framepage_cookie = '';
-
+    /**
+     * @var string 图片获取cookie
+     */
     private $register_image_cookie = '';
 
+
     public function __construct(){
-        $this->register_page_cookie = PATH_COOKIE.'/Pube/Data/register/ec21.cookie';
-        $this->register_framepage_cookie = PATH_COOKIE.'/Pube/Data/register/ec21.frame.cookie';
-        $this->register_image_cookie = PATH_COOKIE.'/Pube/Data/register/ec21.image.cookie';
+        $this->register_page_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.cookie';
+        $this->register_framepage_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.frame.cookie';
+        $this->register_image_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.image.cookie';
     }
 
     public function getRegisterPage(){
@@ -71,8 +73,8 @@ class EC21MemberRegister extends MemberRigister {
         $img_path or $img_path = '/dynamic/capture/'.md5($chid).'ec21.gif';
         $url = 'http://api.solvemedia.com/papi/media?c='.$chid.';w=300;h=100;fg=000000';
         $content = self::get($url,'',$this->register_image_cookie);
-        $path = SR_PATH_BASE.'/Public/'.ltrim($img_path,'/');
-        Storage::touch($path);
+        $path = PUBE_SCRIPT_DIR.'/'.ltrim($img_path,'/');
+        self::touch($path);
         echo is_file($path)?'Y':'N';
         $size = file_put_contents($path,$content);
         if($size < 300){
@@ -95,10 +97,13 @@ class EC21MemberRegister extends MemberRigister {
         }
         return false;
     }
-    public function register($code){
+
+
+
+    public function register(){
         $username = strtolower('zbg'.time());
-        $phone = '15658070289';
-        $email = '380636453@qq.com';
+        $phone = '1701180323';
+        $email = $this->email;
         $tel = [
             'tel1_no'=>'86',
             'tel2_no'=>substr($phone,0,3),
@@ -118,7 +123,7 @@ class EC21MemberRegister extends MemberRigister {
             'inKn'=>'',
             'FBIn'=>'',
             'fEmail'=>'',
-            'captchaState'=>$code,
+            'captchaState'=>$this->capture,
             'country'=>'CN',
             'gubuns'=>'S',
             'contact_sex'=>'M',
@@ -136,34 +141,99 @@ class EC21MemberRegister extends MemberRigister {
         ];
         $data = array_merge($data,$tel);
         $content = self::post('http://www.ec21.com/global/member/myRegistSubmit.jsp',http_build_query($data),'',$this->register_page_cookie);
-
-        echo htmlspecialchars($content)."#";
+        echo htmlspecialchars($content);
         if(strpos($content,'/myRegistSubmit.jsp')){
-            $data = [
-                'another'   => '',
-                'another2'   => '',
-                'member_id'   => $username,
-                'comp_nm'   => $comp_nm,
-                'contact_nm'   => $username,
-                'email1'   => $email,
-                'gubun'   => 'S',
-                'country_cd'   => 'CN',
-                'mtype'   => 'T',
-                'languageSelect'   => 'chinese',
-                'facebookInvolve'   => '',
-            ];
-            $data = array_merge($data,$tel);
-            $content = self::post('http://www.ec21.com/global/member/myRegistOk.jsp',http_build_query($data),'',$this->register_page_cookie,false,[
-                CURLOPT_REFERER => 'http//www.ec21.com/global/member/myRegistSubmit.jsp',
-            ]);
-        }else{
-            $content = false;
+            //如果没有返回还是可以登录，邮箱不通过也可以...
         }
-        unlink($this->register_page_cookie);
-        unlink($this->register_framepage_cookie);
-        unlink($this->register_image_cookie);
-        return $content;
+        return [
+            'email'     =>  $email,
+            'username'  =>  $username,
+            'passwd'    =>  $username,
+        ];
     }
 
+    public function update(){
+        $data = [
+            'actionName' => 'update',
+            'sellCategoryCode' => '4340',
+            'buyCategoryCode' => '4314',
+            'c_email1' => $this->email,
+            'c_email2' => '',
+            'mtype' => 'T',
+            'flag' => '1',
+            'gubuns' => 'S',
+            'fileFlag2' => '0',
+            'pimg2Local' => '',
+            'Upimgname' => '',
+            'pimg2LocalSize' => '',
+            'logoimg_chk' => '2',
+            'cimg1LocalSize' => '',
+            'imageModifyFlag' => '0',
+            'editBrochure' => '',
+            'delBrochure' => '',
+            'fn1' => '',
+            'fOriNm1' => '',
+            'fId1' => '',
+            'fSize1' => '',
+            'broTitle1' => '',
+            'broDesc1' => '',
+            'fn2' => '',
+            'fOriNm2' => '',
+            'fId2' => '',
+            'fSize2' => '',
+            'broTitle2' => '',
+            'broDesc2' => '',
+            'fn3' => '',
+            'fOriNm3' => '',
+            'fId3' => '',
+            'fSize3' => '',
+            'broTitle3' => '',
+            'broDesc3' => '',
+            'fn4' => '',
+            'fOriNm4' => '',
+            'fId4' => '',
+            'fSize4' => '',
+            'broTitle4' => '',
+            'broDesc4' => '',
+            'fn5' => '',
+            'fOriNm5' => '',
+            'fId5' => '',
+            'fSize5' => '',
+            'broTitle5' => '',
+            'broDesc5' => '',
+            'gubun' => 'S',
+            'comp_nm' => 'Zbg'.time().' Corporation',
+            'addr1' => 'Products or Selling Leads 3',
+            'addr3' => 'Zhejiang',
+            'stateSelect' => '',
+            'addr2' => 'Hangzhou',
+            'citySelect' => '0571',
+            'zip_no' => '0571',
+            'country_cd' => 'CN',
+            'tel1_no' => '86',
+            'tel2_no' => '0571',
+            'tel3_no' => '84515458',
+            'fax1_no' => '',
+            'fax2_no' => '0571',
+            'fax3_no' => '',
+            'keyword' => 'Please',
+            'keyword_s' => 'Please',
+            'busi_no' => '',
+            'trade_no' => '',
+            'type' => '01',
+            'found_dt' => '2010',
+            'employee' => '04',
+            'revenue_qt' => '03',
+            'homelink' => '',
+            'comp_info' => 'This is a description about nothing !Do not fire us,thank you sir,thank you sir,thank you sir,thank you sir!',
+            'video_seq' => '',
+            'ytVer' => '',
+            'video_type' => '1',
+        ];
+        $content = self::post('http://www.ec21.com/global/basic/MyCompanyProfileSubmit.jsp',http_build_query($data),'',$this->register_page_cookie);
+        $content = htmlspecialchars($content);
+        echo "完善公司信息返回:{$content}<br>";
+        return stripos($content,'OK') !== false;
+    }
 
 }

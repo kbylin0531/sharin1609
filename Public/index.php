@@ -12,5 +12,7 @@ const SR_PAGE_TRACE_ON = true;
 
 include '../Sharin/web.engine.php';
 
-Sharin::init();
+Sharin::init([
+    'APP_NAME'  => 'App',//一个入口文件对应一个应用
+]);
 Sharin::start();
