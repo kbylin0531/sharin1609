@@ -19,13 +19,13 @@ L.P.datatables = (function () {
             if(L.O.isStr(data)){
                 data = L.O.toObj(data);/* T json string to json object */
             }
-            console.log(data);
-            if (this.api) {
-                if ((undefined === clear ) || clear) this.api.clear();//clear为true或者未设置时候都会清除之前的表格内容
-                this.api.rows.add(data).draw();
-            } else {
-                console.log("No Datatable API binded!");
+            console.log(data,clear);
+            if (!this.api)  throw "No Datatable API binded!";
+            if (false !== clear){
+                this.api.clear();//it will clean the old data if the param 2 is empty or value of true
+                console.log('clear');
             }
+            this.api.rows.add(data).draw();
             return this;
         },
         //表格发生了draw事件时设置调用函数(表格加载,翻页都会发生draw事件)

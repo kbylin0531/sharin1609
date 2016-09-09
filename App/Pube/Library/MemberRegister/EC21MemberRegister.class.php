@@ -15,10 +15,6 @@ class EC21MemberRegister extends MemberRigister {
      */
     private $register_page_cookie = '';
     /**
-     * @var string
-     */
-    private $register_framepage_cookie = '';
-    /**
      * @var string 图片获取cookie
      */
     private $register_image_cookie = '';
@@ -26,7 +22,6 @@ class EC21MemberRegister extends MemberRigister {
 
     public function __construct(){
         $this->register_page_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.cookie';
-        $this->register_framepage_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.frame.cookie';
         $this->register_image_cookie = PUBE_COOKIE_DIR.'/Pube/Data/register/ec21.image.cookie';
     }
 
@@ -36,11 +31,6 @@ class EC21MemberRegister extends MemberRigister {
         return $content;
     }
 
-    public function getFramePage(){
-        $url = 'http://www.ec21.com/global/captcha/captcha.jsp?type=MyRegist';
-        $content = self::get($url,'',$this->register_framepage_cookie,true);
-        return $content;
-    }
     public function getMagic(){
         $url = 'http://api.solvemedia.com/papi/challenge.script?k=9PRRNhB78ykeJvMH-fDB-ypgIsmsdvyB';
         $content = self::get($url,'','',false);

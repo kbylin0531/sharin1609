@@ -4,6 +4,7 @@ use Library\MemberRegister\EC21MemberRegister;
 use Library\Ngine;
 use Library\Utils\RecordSaver;
 use Sharin\Core\Controller;
+use Sharin\Core\Response;
 use Sharin\Library\Session;
 
 include_once dirname(__DIR__).'/Library/Ngine.class.php';
@@ -11,7 +12,24 @@ Ngine::init();
 
 class Index extends Controller{
 
-    public function index(){
+    public function index($code='',$email=''){
+        if($code){
+            $register = new EC21MemberRegister();
+            $code = $register->postCode($code,Session::get('childId'));
+            $info = $register->setCapture($code)->setEmail($email)->register();
+            if($register->update()){
+                RecordSaver::set($info['username'],$info);
+                Response::ajaxBack([
+                    'type'  => 1,
+                    'value'=> $info,
+                ]);
+            }else{
+                Response::ajaxBack([
+                    'type'  => 0,
+                    'value'=> '修改失败',
+                ]);
+            }
+        }
         $this->assign('data',json_encode(array_values(RecordSaver::get())));
         $this->display();
     }
@@ -19,6 +37,19 @@ class Index extends Controller{
     public function showList(){
         echo '<pre>';
         var_export(RecordSaver::get());
+    }
+
+    public function getImage(){
+        $register = new EC21MemberRegister();
+        $register->getRegisterPage();
+        $magic = $register->getMagic();
+        $childId = $register->getChidId($magic);
+        Session::set('childId',$childId);
+
+        $image = $register->saveImage('',$childId);
+        Response::ajaxBack([
+            'src' => SR_PUBLIC_URL.'/'.$image,
+        ]);
     }
 
     public function testRigister($code='',$email=''){
@@ -35,7 +66,6 @@ class Index extends Controller{
             echo $register->update()? 'Y':'N';
         }else{
             $register->getRegisterPage();
-            $register->getFramePage();
             $magic = $register->getMagic();
             $childId = $register->getChidId($magic);
             Session::set('childId',$childId);
