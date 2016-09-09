@@ -308,3 +308,5 @@ var md5 = (function () {
 
 L.sha1 =  sha1;
 L.md5 = md5;
+// 加密测试
+// console.log(L.md5(L.sha1('123456')) === 'd93a5def7511da3d0f2d171d9c344e91');

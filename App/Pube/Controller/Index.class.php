@@ -2,6 +2,7 @@
 namespace App\Pube\Controller;
 use Library\MemberRegister\EC21MemberRegister;
 use Library\Ngine;
+use Library\ProductProvider;
 use Library\Utils\RecordSaver;
 use Sharin\Core\Controller;
 use Sharin\Core\Response;
@@ -31,6 +32,54 @@ class Index extends Controller{
             }
         }
         $this->assign('data',json_encode(array_values(RecordSaver::get())));
+        $this->display();
+    }
+
+    public function products(){
+        $this->assign('data',json_encode((new ProductProvider())->getlist()));
+        $this->display();
+    }
+
+    /**
+     * 一键发布
+     * @param $info
+     */
+    public function publish($info){
+        if(!is_array($info)){
+            $info = json_decode($info,true);
+        }
+/**
+ *
+$member = new EC21Member('zhangyishang','zhangyishang');
+$product = new EC21Product();
+$product->setName('New PRODUCT23'.time());
+$product->setDescription('New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23New PRODUCT23');
+$product->addKeywork('PRODUCT23New2');
+$product->addKeywork('PRODUCT23New3');
+$product->addKeywork('PRODUCT23New4');
+$product->addKeywork('PRODUCT23New5');
+$product->setImage(PATH_BASE.'/b.jpg');
+ *
+$product->categorymId = '212815';
+$product->categoryNm = 'Pharmaceutical Intermediates';
+$product->gcatalog_id = 'GC10133729'; //GC10145766
+
+if(!$member->login()){
+throw new Exception('用户登录出错！');
+}
+
+if($product->submit($member)){
+$href = $product->getLastSubmit($member);
+echo "提交成功:<a href='{$href}' target='_blank'>{$href}</a>";
+}else{
+echo '提交失败';
+}
+ */
+
+    }
+
+    public function published(){
+        //todo:查看发布的
         $this->display();
     }
 

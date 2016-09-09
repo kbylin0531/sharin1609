@@ -74,6 +74,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
         },
         add: function (name) {
             this._[this.posNm(name)] = true;
+            return this;
         }
     };
     /**
@@ -373,7 +374,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
                     result = call(obj[i], i, meta);
                     if (result === '[break]') break;
                     if (result === '[continue]') continue;
-                    if (result !== undefined) return result;//如果返回了什么东西解释实际返回了，当然除了命令外
+                    if (result !== undefined) return result;
                 }
             } else if (O.isObj(obj)) {
                 for (var key in obj) {
@@ -489,7 +490,6 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             for (i = 0; i < ReadyStack.heap.length; i++) (ReadyStack.heap[i])();
             for (i = ReadyStack.stack.length -1; i >= 0; i--) (ReadyStack.stack[i])();
             pagedone = true;
-
             O.isFunc(loadone) && loadone(Pass);
         }
     };
@@ -498,6 +498,23 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
         jq: jq,
         guid: guid,//随机获取一个GUID
         clone: clone,
+            getRstype:function (path) {/* 获取资源类型 */
+            var type = path.substring(path.length - 3);
+            switch (type) {
+                case 'css':
+                    type = 'css';
+                    break;
+                case '.js':
+                    type = 'js';
+                    break;
+                case 'ico':
+                    type = 'ico';
+                    break;
+                default:
+                    throw "wrong type'" + t + "',it must be[css,js,ico]";
+            }
+            return type;
+        },
         /**
          * load resource for page
          * @param path like '/js/XXX.YY' which oppo to public_url
@@ -509,46 +526,49 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             if (O.isArr(path)) {
                 var env = this;
                 var len = path.length;
-                U.each(path,function (p,i) {
-                    if(len == (i+1)){/* callback if last done */
-                        env.load(p,null,call);
-                    }else{
-                        env.load(p);
-                    }
-                });
+                //同一个组合中也按照顺序加载
+                if(len > 1){
+                    var loadItem = function (i,c) {
+                        var type = L.getRstype(path[i]);
+                        if(i == (len -1)){
+                            //last one
+                            env.load(path[i],type,c);
+                        }else{
+                            env.load(path[i],type,function () {
+                                loadItem(1+i,c);
+                            });
+                        }
+                    };
+                    loadItem(0,call);
+                }else{
+                    env.load(path[1],null,call);
+                }
             } else {
-                if (!type) {//auto get the type
-                    var t = path.substring(path.length - 3);
-                    switch (t) {
+                if (!type) type = this.getRstype(path);
+                if(ScriptLib.has(path)){
+                    /* 本页面加载过将不再重新载入
+                     * 如果库在之前定义过(那么制定到这里的时候一定是加载过的，因为之后加在完成才能执行回调序列)
+                     * 可以直接视为加在完毕
+                     */
+                    call.call();
+                }else{
+                    //现仅仅支持css,js,ico的类型
+                    //注意的是，直接使用document.write('<link .....>') 可能導致html頁面混亂。。。
+                    switch (type) {
                         case 'css':
-                            type = 'css';
+                            L.loadStyle( _path(path));
+                            call.call();/* style资源可有可无，可以视为立即加载完毕 */
                             break;
-                        case '.js':
-                            type = 'js';
+                        case 'js':
+                            L.loadScript(_path(path),call);
                             break;
                         case 'ico':
-                            type = 'ico';
+                            L.loadIcon(_path(path));
+                            call.call();/* ico资源可有可无，可以视为立即加载完毕 */
                             break;
-                        default:
-                            throw "wrong type'" + t + "',it must be[css,js,ico]";
                     }
+                    ScriptLib.add(path);
                 }
-                //本页面加载过将不再重新载入
-                if(ScriptLib.has(path)){return this;}
-                //现仅仅支持css,js,ico的类型
-                //注意的是，直接使用document.write('<link .....>') 可能導致html頁面混亂。。。
-                switch (type) {
-                    case 'css':
-                        L.loadStyle( _path(path));
-                        break;
-                    case 'js':
-                        L.loadScript(_path(path),call);
-                        break;
-                    case 'ico':
-                        L.loadIcon(_path(path) );
-                        break;
-                }
-                ScriptLib.add(path);
             }
             return this;
         },
@@ -578,7 +598,6 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             opts && U.each(opts,function (v,k) {
                 el[k] = v;
             });
-            console.log(el,opts);
             if (ih) el.innerHTML = ih;
             return el;
         },
@@ -587,12 +606,14 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             _headTag.appendChild(ele);
             return ele;
         },
+        /* ps:icon是否加在成功无关紧要 */
         loadIcon:function(path){
             this.attach2Head(this.newEle("link",{
                 href:path,
                 rel:"shortcut icon"
             }));
         },
+        /* ps:样式表是否加在成功无关紧要 */
         loadStyle:function (path) {
             this.attach2Head(this.newEle("link",{
                 href:path,
@@ -601,19 +622,21 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             }));
         },
         loadScript: function (url, callback){
-            var script = this.attach2Head(this.newEle("script",{
+            this.readyNext(this.attach2Head(this.newEle("script",{
                 src:url,
                 type:"text/javascript"
-            }));
-            if (script.readyState){ //IE
-                script.onreadystatechange = function(){
-                    if (script.readyState == "loaded" || script.readyState == "complete"){
-                        script.onreadystatechange = null;
+            })),callback);
+        },
+        readyNext:function (ele,callback) {
+            if (ele.readyState){ //IE
+                ele.onreadystatechange = function(){
+                    if (ele.readyState == "loaded" || ele.readyState == "complete"){
+                        ele.onreadystatechange = null;
                         callback && callback();
                     }
                 };
             } else { //Others
-                if(callback) script.onload = callback;
+                if(callback) ele.onload = callback;
             }
         },
         cookie: cookie,
@@ -697,16 +720,14 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
                 return name?(O.notempty(name,this.JsMap) ? this.JsMap[name] : (dft || false)):this.JsMap;
             },
             load:function(pnm,call){/* plugin name, callback */
-                if(pnm in this.JsMap){
-                    pnm = this.JsMap[pnm];
-                }
+                if(pnm in this.JsMap) pnm = this.JsMap[pnm];
                 if(pagedone){
                     /* it will not put into quene if page has load done！ */
                     L.load(pnm,null,call);
                 }else{
                     Pass.plugins.push([pnm,call]);
                 }
-                return L.P;
+                return this;
             },
             /**
              * @param selector
@@ -753,450 +774,3 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
     };
     loadQuene(0);
 });
-// 加密测试
-// console.log(L.md5(L.sha1('123456')) === 'd93a5def7511da3d0f2d171d9c344e91');
-console.log('如果有好的建议和想法请发邮件到我的邮箱，linzhv@qq.com');/**
- * 模板引擎
- */
-!(function () {
-    /**
-     * 模板引擎
-     * @param filename 模板名
-     * @param content 数据。如果为字符串则编译并缓存编译结果
-     * @returns {*} 渲染好的HTML字符串或者渲染方法
-     */
-    var template = function (filename, content) {
-        return typeof content === 'string'
-            ?   compile(content, {
-            filename: filename
-        })
-            :   renderFile(filename, content);
-    };
-    template.version = '3.0.0';
-
-    /**
-     * 设置全局配置
-     * @param name 名称
-     * @param value 值
-     */
-    template.config = function (name, value) {
-        defaults[name] = value;
-    };
-
-    var defaults = template.defaults = {
-        openTag: '<%',    // 逻辑语法开始标签
-        closeTag: '%>',   // 逻辑语法结束标签
-        escape: true,     // 是否编码输出变量的 HTML 字符
-        cache: true,      // 是否开启缓存（依赖 options 的 filename 字段）
-        compress: false,  // 是否压缩输出
-        parser: null      // 自定义语法格式器 @see: template-syntax.js
-    };    var cacheStore = template.cache = {};    /**
-     * 渲染模板
-     * @param source 模板
-     * @param options 数据
-     * @returns {*} 渲染好的字符串
-     */
-    template.render = function (source, options) {
-        return compile(source, options);
-    };    /**
-     * 渲染模板(根据模板名)
-     * @name    template.render
-     * @param   {String}    模板名
-     * @param   {Object}    数据
-     * @return  {String}    渲染好的字符串
-     */
-    var renderFile = template.renderFile = function (filename, data) {
-        var fn = template.get(filename) || showDebugInfo({
-                filename: filename,
-                name: 'Render Error',
-                message: 'Template not found'
-            });
-        return data ? fn(data) : fn;
-    };    /**
-     * 获取编译缓存（可由外部重写此方法）
-     * @param filename 模板名
-     * @returns {*}
-     */
-    template.get = function (filename) {
-
-        var cache;
-
-        if (cacheStore[filename]) {
-            // 使用内存缓存
-            cache = cacheStore[filename];
-        } else if (typeof document === 'object') {
-            // 加载模板并编译
-            var elem = document.getElementById(filename);
-
-            if (elem) {
-                var source = (elem.value || elem.innerHTML)
-                    .replace(/^\s*|\s*$/g, '');
-                cache = compile(source, {
-                    filename: filename
-                });
-            }
-        }
-
-        return cache;
-    };    var toString = function (value, type) {
-
-        if (typeof value !== 'string') {
-
-            type = typeof value;
-            if (type === 'number') {
-                value += '';
-            } else if (type === 'function') {
-                value = toString(value.call(value));
-            } else {
-                value = '';
-            }
-        }
-
-        return value;
-
-    };    var escapeMap = {
-        "<": "&#60;",
-        ">": "&#62;",
-        '"': "&#34;",
-        "'": "&#39;",
-        "&": "&#38;"
-    };    var escapeFn = function (s) {
-        return escapeMap[s];
-    };
-
-    var escapeHTML = function (content) {
-        return toString(content)
-            .replace(/&(?![\w#]+;)|[<>"']/g, escapeFn);
-    };    var isArray = L.O.isArr;    var each = function (data, callback) {
-        var i, len;
-        if (isArray(data)) {
-            for (i = 0, len = data.length; i < len; i++) {
-                callback.call(data, data[i], i, data);
-            }
-        } else {
-            for (i in data) {
-                callback.call(data, data[i], i);
-            }
-        }
-    };    var utils = template.utils = {
-
-        $helpers: {},
-
-        $include: renderFile,
-
-        $string: toString,
-
-        $escape: escapeHTML,
-
-        $each: each
-
-    };
-    /**
-     * 添加模板辅助方法
-     * @param name 名称
-     * @param helper 方法
-     */
-    template.helper = function (name, helper) {
-        helpers[name] = helper;
-    };
-
-    var helpers = template.helpers = utils.$helpers;
-
-    /**
-     * 模板错误事件（可由外部重写此方法）
-     * @param e
-     */
-    template.onerror = function (e) {
-        var message = 'Template Error\n\n';
-        for (var name in e) {
-            message += '<' + name + '>\n' + e[name] + '\n\n';
-        }
-
-        if (typeof console === 'object') {
-            console.error(message);
-        }
-    };// 模板调试器
-    var showDebugInfo = function (e) {
-
-        template.onerror(e);
-
-        return function () {
-            return '{Template Error}';
-        };
-    };    /**
-     * 编译模板
-     * 2012-6-6 @TooBug: define 方法名改为 compile，与 Node Express 保持一致
-     * @name    template.compile
-     * @param   {String}    模板字符串
-     * @param   {Object}    编译选项
-     *
-     *      - openTag       {String}
-     *      - closeTag      {String}
-     *      - filename      {String}
-     *      - escape        {Boolean}
-     *      - compress      {Boolean}
-     *      - debug         {Boolean}
-     *      - cache         {Boolean}
-     *      - parser        {Function}
-     *
-     * @return  {Function}  渲染方法
-     */
-    var compile = template.compile = function (source, options) {
-
-        // 合并默认配置
-        options = options || {};
-        for (var name in defaults) {
-            if (options[name] === undefined) {
-                options[name] = defaults[name];
-            }
-        }        var filename = options.filename;        try {
-
-            var Render = compiler(source, options);
-
-        } catch (e) {
-
-            e.filename = filename || 'anonymous';
-            e.name = 'Syntax Error';
-
-            return showDebugInfo(e);
-        }        // 对编译结果进行一次包装
-
-        var render = function(data) {
-            try {
-                return new Render(data, filename) + '';
-            } catch (e) {
-                // 运行时出错后自动开启调试模式重新编译
-                if (!options.debug) {
-                    options.debug = true;
-                    return compile(source, options)(data);
-                }
-                return showDebugInfo(e)();
-            }
-        };
-        render.prototype = Render.prototype;
-        render.toString = function () {
-            return Render.toString();
-        };
-        if (filename && options.cache) {
-            cacheStore[filename] = render;
-        }
-        return render;
-    };
-
-// 数组迭代
-    var forEach = utils.$each;// 静态分析模板变量
-    var KEYWORDS =
-        // 关键字
-        'break,case,catch,continue,debugger,default,delete,do,else,false,finally,for,function,if,in,instanceof,'+
-        +'new,null,return,switch,this,throw,true,try,typeof,var,void,while,with'
-        // 保留字
-        + ',abstract,boolean,byte,char,class,const,double,enum,export,extends,final,float,goto,int,interface,long,native'
-        + ',implements,import,package,private,protected,public,short,static,super,synchronized,throws,transient,volatile'
-        // ECMA 5 - use strict
-        + ',arguments,let,yield,undefined';
-    var REMOVE_RE = /\/\*[\w\W]*?\*\/|\/\/[^\n]*\n|\/\/[^\n]*$|"(?:[^"\\]|\\[\w\W])*"|'(?:[^'\\]|\\[\w\W])*'|\s*\.\s*[$\w\.]+/g;
-    var SPLIT_RE = /[^\w$]+/g;
-    var KEYWORDS_RE = new RegExp(["\\b" + KEYWORDS.replace(/,/g, '\\b|\\b') + "\\b"].join('|'), 'g');
-    var NUMBER_RE = /^\d[^,]*|,\d[^,]*/g;
-    var BOUNDARY_RE = /^,+|,+$/g;
-    var SPLIT2_RE = /^$|,+/;
-
-// 获取变量
-    function getVariable (code) {
-        return code
-            .replace(REMOVE_RE, '')
-            .replace(SPLIT_RE, ',')
-            .replace(KEYWORDS_RE, '')
-            .replace(NUMBER_RE, '')
-            .replace(BOUNDARY_RE, '')
-            .split(SPLIT2_RE);
-    }// 字符串转义
-    function stringify (code) {
-        return "'" + code
-            // 单引号与反斜杠转义
-                .replace(/('|\\)/g, '\\$1')
-                // 换行符转义(windows + linux)
-                .replace(/\r/g, '\\r')
-                .replace(/\n/g, '\\n') + "'";
-    }    function compiler (source, options) {
-
-        var debug = options.debug;
-        var openTag = options.openTag;
-        var closeTag = options.closeTag;
-        var parser = options.parser;
-        var compress = options.compress;
-        var escape = options.escape;
-        var line = 1;
-        var uniq = {$data:1,$filename:1,$utils:1,$helpers:1,$out:1,$line:1};
-        var isNewEngine = ''.trim;// '__proto__' in {}
-        var replaces = isNewEngine
-            ? ["$out='';", "$out+=", ";", "$out"]
-            : ["$out=[];", "$out.push(", ");", "$out.join('')"];
-
-        var concat = isNewEngine
-            ? "$out+=text;return $out;"
-            : "$out.push(text);";
-
-        var print = "function(){"
-            +      "var text=''.concat.apply('',arguments);"
-            +       concat
-            +  "}";
-
-        var include = "function(filename,data){"
-            +      "data=data||$data;"
-            +      "var text=$utils.$include(filename,data,$filename);"
-            +       concat
-            +   "}";
-
-        var headerCode = "'use strict';"
-            + "var $utils=this,$helpers=$utils.$helpers,"
-            + (debug ? "$line=0," : "");
-
-        var mainCode = replaces[0];
-
-        var footerCode = "return new String(" + replaces[3] + ");";
-
-        // html与逻辑语法分离
-        forEach(source.split(openTag), function (code) {
-            code = code.split(closeTag);
-
-            var $0 = code[0];
-            var $1 = code[1];
-
-            // code: [html]
-            if (code.length === 1) {
-
-                mainCode += html($0);
-
-                // code: [logic, html]
-            } else {
-
-                mainCode += logic($0);
-
-                if ($1) {
-                    mainCode += html($1);
-                }
-            }        });
-
-        var code = headerCode + mainCode + footerCode;
-
-        // 调试语句
-        if (debug) {
-            code = "try{" + code + "}catch(e){"
-                +       "throw {"
-                +           "filename:$filename,"
-                +           "name:'Render Error',"
-                +           "message:e.message,"
-                +           "line:$line,"
-                +           "source:" + stringify(source)
-                +           ".split(/\\n/)[$line-1].replace(/^\\s+/,'')"
-                +       "};"
-                + "}";
-        }
-
-        try {
-            var Render = new Function("$data", "$filename", code);
-            Render.prototype = utils;
-            return Render;
-        } catch (e) {
-            e.temp = "function anonymous($data,$filename) {" + code + "}";
-            throw e;
-        }
-
-        // 处理 HTML 语句
-        function html (code) {
-
-            // 记录行号
-            line += code.split(/\n/).length - 1;
-
-            // 压缩多余空白与注释
-            if (compress) {
-                code = code
-                    .replace(/\s+/g, ' ')
-                    .replace(/<!--[\w\W]*?-->/g, '');
-            }
-
-            if (code) {
-                code = replaces[1] + stringify(code) + replaces[2] + "\n";
-            }
-
-            return code;
-        }        // 处理逻辑语句
-        function logic (code) {
-
-            var thisLine = line;
-
-            if (parser) {
-
-                // 语法转换插件钩子
-                code = parser(code, options);
-
-            } else if (debug) {
-
-                // 记录行号
-                code = code.replace(/\n/g, function () {
-                    line ++;
-                    return "$line=" + line +  ";";
-                });
-
-            }
-            // 输出语句. 编码: <%=value%> 不编码:<%=#value%>
-            // <%=#value%> 等同 v2.0.3 之前的 <%==value%>
-            if (code.indexOf('=') === 0) {
-                var escapeSyntax = escape && !/^=[=#]/.test(code);
-                code = code.replace(/^=[=#]?|[\s;]*$/g, '');
-                // 对内容编码
-                if (escapeSyntax) {
-
-                    var name = code.replace(/\s*\([^\)]+\)/, '');
-
-                    // 排除 utils.* | include | print
-
-                    if (!utils[name] && !/^(include|print)$/.test(name)) {
-                        code = "$escape(" + code + ")";
-                    }
-
-                    // 不编码
-                } else {
-                    code = "$string(" + code + ")";
-                }                code = replaces[1] + code + replaces[2];
-
-            }
-
-            if (debug) {
-                code = "$line=" + thisLine + ";" + code;
-            }
-
-            // 提取模板中的变量名
-            forEach(getVariable(code), function (name) {
-
-                // name 值可能为空，在安卓低版本浏览器下
-                if (!name || uniq[name]) {
-                    return;
-                }
-
-                var value;
-
-                // 声明模板变量
-                // 赋值优先级:
-                // [include, print] > utils > helpers > data
-                if (name === 'print') {
-                    value = print;
-                } else if (name === 'include') {
-                    value = include;
-                } else if (utils[name]) {
-                    value = "$utils." + name;
-                } else if (helpers[name]) {
-                    value = "$helpers." + name;
-                } else {
-                    value = "$data." + name;
-                }
-
-                headerCode += name + "=" + value + ",";
-                uniq[name] = true;            });
-            return code + "\n";
-        }
-    }
-    //原先還有nidejs和seajs的支持
-    this.template = template;
-})();

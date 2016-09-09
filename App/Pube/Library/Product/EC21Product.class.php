@@ -33,7 +33,6 @@ class EC21Product extends Product{
         'keyword4'=>'',
         'keyword_s'=>'',
 
-
         //自动设置（无关参数）
         'frequencyCategory'=>'',//常用分类，默认为''
         'Upimgname'=>'',//上传图片访问地址
@@ -83,6 +82,33 @@ class EC21Product extends Product{
         'video_seq'=>'',
         'video_type'=>'1',
     ];
+
+    /**
+     * 船舰产品分类组
+     * @param Member $member
+     * @return array|bool
+     */
+    public function createGroup(Member $member){
+        $url = 'http://www.ec21.com/global/basic/MyPGroupEditSubmit.jsp?actionName=insertPop';
+        $content = self::post($url,http_build_query([
+                'fileFlag'=>'0/',
+                'pimg1Local'=>'',
+                'pimg1LocalSize'=>'',
+                'gcatalog_id'=>'',
+                'pageNum'=>'',
+                'tag'=>'Y',
+                'gcatalog_nm'=>'Default',
+                'allDesc'=>'',
+                'display'=>'Y',
+        ]),'',$member->getCookie());
+        if(preg_match("option\svalue=\'(.*)\'\>(.*)\<\/",$content,$matches) and isset($matches[1],$matches[2])){
+            return [
+                $matches[1],//code
+                'Default',//name
+            ];
+        }
+        return false;
+    }
 
     /**
      * @param $name

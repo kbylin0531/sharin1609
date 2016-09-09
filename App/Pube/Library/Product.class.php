@@ -9,7 +9,7 @@
 namespace Library;
 use Library\Utils\HttpRequest;
 use Exception;
-abstract class Product {
+abstract class Product extends Ngine{
     /**
      * @var string 产品提交页面
      */

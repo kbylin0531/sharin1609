@@ -19,11 +19,13 @@ L.P.datatables = (function () {
             if(L.O.isStr(data)){
                 data = L.O.toObj(data);/* T json string to json object */
             }
-            console.log(data,clear);
+            if(L.O.isObj(data)){
+                /* for appending a row */
+                data = [data];
+            }
             if (!this.api)  throw "No Datatable API binded!";
             if (false !== clear){
                 this.api.clear();//it will clean the old data if the param 2 is empty or value of true
-                console.log('clear');
             }
             this.api.rows.add(data).draw();
             return this;

@@ -2,7 +2,9 @@
 <block name="body">
     <div class="container">
         <br>
-        <div class="toolbar"><button type="button" id="add" class="btn btn-default">click</button></div>
+        <div class="toolbar">
+            <button type="button" id="register" class="btn btn-default">register</button>
+        </div>
         <br>
         <table id="dtable" class="table table-striped table-bordered" cellspacing="0" width="100%"></table>
     </div>
@@ -19,7 +21,7 @@
 </block>
 <block name="script">
     <script>
-        L.P.load('jq').load('bs').load('dt').load('mydt',function () {
+        L.P.load('jq').load('bs').load('dt',function () {
             var dtable = L.P.datatables.create('#dtable',{
                 columns: [
                     {
@@ -40,8 +42,12 @@
                     },
                     {
                         title:'operation',
-                        data:function () {
-                            return '<a href="#" target="_blank">login</a>';
+                        data:function (row) {
+                            var query = $.param({
+                                username:row.value.username,
+                                passwd:row.value.passwd
+                            });
+                            return '<a href="#" target="_blank">login</a> <a href="__CONTROLLER__/published?'+query+'" target="_blank">publish</a>';
                         }
                     }
                 ]
@@ -74,7 +80,7 @@
                         });
                     }
                 }).hide();
-                $("#add").click(function () {
+                $("#register").click(function () {
                     modal.show();
                 });
             });

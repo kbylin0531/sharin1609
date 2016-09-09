@@ -48,7 +48,7 @@ L.P.modal = (function () {
                 .append(body = $(L.newEle("div.modal-body")).append(L.jq(selector).removeClass('hidden')));//suggest selector has class 'hidden'
             //设置足部
             content.append($(L.newEle("div.modal-footer")).append(
-                $(L.newEle("button.btn.btn-sm._cancel",{"type":"button","data-dismiss":"modal"},ic['cancelText'])).click(ic.cancel)
+                $(L.newEle("button.btn.btn-sm._cancel",{"type":"button","dataDismiss":"modal"},ic['cancelText'])).click(ic.cancel)
             ).append(
                 $(L.newEle("button.btn.btn-sm._confirm",{"type":"button"},ic['confirmText'])).click(ic.confirm)
             ));
