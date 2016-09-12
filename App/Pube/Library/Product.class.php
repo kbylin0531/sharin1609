@@ -9,6 +9,8 @@
 namespace Library;
 use Library\Utils\HttpRequest;
 use Exception;
+use Sharin\Library\Helper\Network;
+
 abstract class Product extends Ngine{
     /**
      * @var string 产品提交页面
@@ -44,8 +46,7 @@ abstract class Product extends Ngine{
             throw new Exception('用户登录出错！');
         }
         $form = $this->attrs;
-        $method = $this->submitMethod;
-        $result = HttpRequest::$method($this->submitAddress,$form,$member->getCookie(),true,true);
+        $result = HttpRequest::post($this->submitAddress,$form,$member->getCookie(),true,true);
         return $this->isSucmitSuccess($result);
     }
 
@@ -80,6 +81,10 @@ abstract class Product extends Ngine{
      * @return $this
      */
     public function setImage($images){
+        if(strpos(trim($images),'http') === 0){
+            //如果图片存放在网络上，先删除
+            $images = HttpRequest::download($images);
+        }
         $this->images = $images;
     }
 

@@ -7,7 +7,9 @@
  */
 
 namespace Library\MemberRegister;
+use Library\Member;
 use Library\MemberRigister;
+use Sharin\Developer;
 
 class EC21MemberRegister extends MemberRigister {
     /**
@@ -131,15 +133,49 @@ class EC21MemberRegister extends MemberRigister {
         ];
         $data = array_merge($data,$tel);
         $content = self::post('http://www.ec21.com/global/member/myRegistSubmit.jsp',http_build_query($data),'',$this->register_page_cookie);
-        echo htmlspecialchars($content);
         if(strpos($content,'/myRegistSubmit.jsp')){
             //如果没有返回还是可以登录，邮箱不通过也可以...
         }
+        //自动创建分类
+//        $member = new Member\EC21Member($username,$username);
+//        $group = $this->createGroup($member);
+//        if(false === $group){
+//            return false;
+//        }
         return [
             'email'     =>  $email,
             'username'  =>  $username,
             'passwd'    =>  $username,
         ];
+    }
+
+    /**
+     * 船舰产品分类组
+     * @param Member $member
+     * @return array|bool
+     */
+    public function createGroup(Member $member){
+        $url = 'http://www.ec21.com/global/basic/MyPGroupEditSubmit.jsp?actionName=insertPop';
+        if(!$member->login()) return false;
+        $content = self::post($url,http_build_query([
+            'fileFlag'=>'0/',
+            'pimg1Local'=>'',
+            'pimg1LocalSize'=>'',
+            'gcatalog_id'=>'',
+            'pageNum'=>'',
+            'tag'=>'Y',
+            'gcatalog_nm'=>'Default',
+            'allDesc'=>'',
+            'display'=>'Y',
+        ]),'',$member->getCookie());
+        echo htmlspecialchars($content);
+        if(preg_match("/option\\svalue='(.*)'\\>(.*)\\<\\//",$content,$matches) and isset($matches[1],$matches[2])){
+            return [
+                $matches[1],//code
+                'Default',//name
+            ];
+        }
+        return false;
     }
 
     public function update(){

@@ -49,4 +49,5 @@ abstract class MemberRigister extends Ngine{
     abstract public function update();
 
 
+
 }

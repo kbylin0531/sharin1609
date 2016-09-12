@@ -8,7 +8,7 @@
 
 namespace Library;
 
-abstract class Member {
+abstract class Member extends Ngine{
 
     /**
      * @var string 登录表单提交页面
@@ -36,7 +36,6 @@ abstract class Member {
      */
     protected $register_hiddens = [];
 
-
     //显式表单
     protected $usernameField  = 'username';
     protected $passwordField  = 'password';
@@ -55,36 +54,34 @@ abstract class Member {
      */
     protected $verifycode = '';
 
+    protected $login_cookie = '';
+
     /**
      * Member constructor.
      * @param string $username 用户名
      * @param string $password 密码
      * @param string $verifycode 验证码，不需要验证码的时候默认为空
      */
-    public function __construct($username,$password,$verifycode=''){
+    public function __construct($username,$password='',$verifycode=''){
         $this->username     = $username;
+        $password or $password = $username;
         $this->password     = $password;
         $this->verifycode   = $verifycode;
+        self::touch($this->login_cookie = PUBE_COOKIE_DIR.'Login/Ec21.'.$this->username);
     }
 
     /**
      * 检查用户是否登录
      * 不检测cookie是否过期
-     * @param bool $tryifnotinstatus 未登录的情况下是否尝试登录
      * @return bool
      */
-    public function login($tryifnotinstatus=true){
-        $cookie_exist = is_file($this->getCookie());
-        if($tryifnotinstatus and !$cookie_exist ){
-            $fields = $this->buildLoginFields();
-            $method = $this->login_method;
-            $address = $this->login_addresss;
-            $response = HttpRequest::$method($address,$fields,$this->getCookie(),true);
-            echo '登录返回结果：'.$response.'<br>';
-            $this->saveExpareTimestamp($response);
-            return $this->isLoginSuccess($response);
-        }
-        return $cookie_exist;
+    public function login(){
+        $fields = $this->buildLoginFields();
+        $method = $this->login_method;
+        $address = $this->login_addresss;
+        $response = self::$method($address,$fields,'',$this->login_cookie,true);
+        $this->saveExpareTimestamp($response);
+        return $this->isLoginSuccess($response);
     }
 
     /**
@@ -93,21 +90,8 @@ abstract class Member {
      * @throws \Exception cookie目录不存在或者不可写时抛出异常
      */
     public function getCookie(){
-        $cookie = PUBE_COOKIE_DIR.$this->getIdentify().'.cookie.txt';
-        $dir = dirname($cookie);
-        if(!is_dir($dir)){
-            if(!mkdir($dir,0777,true)){
-                throw new \Exception('创建cookie存放目录失败');
-            }
-        }
-        if(!is_writable($dir)){
-            if(!chmod($dir,0777)){
-                throw new \Exception('为cookie存放目录添加写权限失败');
-            }
-        }
-        return $cookie;
+        return $this->login_cookie;
     }
-
 
     /**
      * @param bool $build
@@ -148,8 +132,25 @@ abstract class Member {
     abstract protected function saveExpareTimestamp($response);
 
     /**
-     * 註冊一個賬號
-     * @return array
+     * @var string 默认分类ID
      */
-    abstract public function register();
+    protected $default_cateid = '';
+
+    /**
+     * @return string
+     */
+    public function getDefaultCateid()
+    {
+        return $this->default_cateid;
+    }
+
+    /**
+     * @param string $default_cateid
+     */
+    public function setDefaultCateid($default_cateid)
+    {
+        $this->default_cateid = $default_cateid;
+    }
+
+
 }

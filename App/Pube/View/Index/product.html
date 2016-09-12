@@ -16,33 +16,43 @@
             var dtable = L.P.datatables.create('#dtable',{
                 columns: [
                     {
-                        title:'username',
-                        data:'value.username'
+                        title:'product id',
+                        data:'pid'
                     },
                     {
-                        title:'password',
-                        data:'value.passwd'
+                        title:'name',
+                        data:'name'
                     },
                     {
-                        title:'email',
-                        data:'value.email'
+                        title:'describe',
+                        data:'describe'
                     },
                     {
-                        title:'sum',
-                        data:'count'
+                        title:'keywork',
+                        data:'keywork'
+                    },
+                    {
+                        title:'image',
+                        data:function (row) {
+                            return '<img src="'+row.image+'" />';
+                        }
                     },
                     {
                         title:'operation',
-                        data:function (row) {
-                            var query = $.param({
-                                username:row.value.username,
-                                passwd:row.value.passwd
-                            });
-                            return '<a href="#" target="_blank">login</a> <a href="__CONTROLLER__/published?'+query+'" target="_blank">publish</a>';
+                        data:function () {
+                            return '<a href="javascript:void;" class="publink">publish</a>';
                         }
                     }
                 ]
             }).load(L.O.toObj('{$data}'));
+
+            $(".publink").click(function () {
+                var row = dtable.data($(this).closest("tr"));
+//                console.log(row);return ;
+                $.post('__ACTION__',row,function (data) {
+                    console.log(data);
+                });
+            });
 
             $("#publish").click(function () {
 

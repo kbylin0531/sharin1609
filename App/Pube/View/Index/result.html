@@ -1,0 +1,54 @@
+<extend file="../Common/base.html" />
+<block name="body">
+    <div class="container">
+        <br>
+        <table id="dtable" class="table table-striped table-bordered" cellspacing="0" width="100%"></table>
+    </div>
+</block>
+<block name="script">
+    <script>
+        L.P.load('jq').load('bs').load('dt',function () {
+            var dtable = L.P.datatables.create('#dtable',{
+                columns: [
+                    {
+                        title:'product id',
+                        data:'pid'
+                    },
+                    {
+                        title:'name',
+                        data:'name'
+                    },
+                    {
+                        title:'url',
+                        data:function (row) {
+                            return '<a target="_blank" href="'+row.url+'" >'+row.url+'</a>';
+                        }
+                    },
+                    {
+                        title:'atime',
+                        data:'atime'
+                    },
+                    {
+                        title:'platform',
+                        data:'platform'
+                    },
+                    {
+                        title:'type',
+                        data:'type'
+                    },
+                    {
+                        title:'uname',
+                        data:'uname'
+                    },
+                    {
+                        title:'image',
+                        data:function (row) {
+                            return '<img src="'+row.image+'" />';
+                        }
+                    }
+                ]
+            }).load(L.O.toObj('{$data}'));
+
+        });
+    </script>
+</block>

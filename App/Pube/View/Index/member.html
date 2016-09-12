@@ -26,26 +26,30 @@
                 columns: [
                     {
                         title:'username',
-                        data:'value.username'
+                        data:'username'
                     },
                     {
                         title:'password',
-                        data:'value.passwd'
+                        data:'passwd'
                     },
                     {
                         title:'email',
-                        data:'value.email'
+                        data:'email'
                     },
                     {
                         title:'sum',
-                        data:'count'
+                        data:'total'
+                    },
+                    {
+                        title:'cateid',
+                        data:'cateid'
                     },
                     {
                         title:'operation',
                         data:function (row) {
                             var query = $.param({
-                                username:row.value.username,
-                                passwd:row.value.passwd
+                                username:row.username,
+                                passwd:row.passwd
                             });
                             return '<a href="#" target="_blank">login</a> <a href="__CONTROLLER__/published?'+query+'" target="_blank">publish</a>';
                         }

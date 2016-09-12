@@ -149,7 +149,6 @@ class Network {
         if($file){
             $basename = pathinfo($file,PATHINFO_BASENAME);
             $dir = realpath(dirname($file));
-//            \Sharin\dumpout($file,realpath(dirname($file)),is_dir(realpath($dir)));
         }else{
             $basename = md5($url.SR_REQUEST_MICROTIME);//应对变化的事件
             $dir = SR_PATH_PUBLIC.'/download';
@@ -168,6 +167,30 @@ class Network {
         ]);
         if(@copy($url, $file, $context)) {
             return $file;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $url
+     * @param int $timeout
+     * @return false|string
+     */
+    public static function download3($url,$timeout=60) {
+        $basename = pathinfo($url,PATHINFO_BASENAME);
+        $dir = PUBE_DATA_DIR.'/download/';
+        $path = $dir.$basename;
+//        Ngine::touch($path);
+        $context = stream_context_create([
+            'http'=>[
+                'method'    =>  'GET',
+                'header'    =>  "",
+                'timeout'   =>  $timeout
+            ],
+        ]);
+        if(@copy($url, $path, $context)) {
+            return $path;
         } else {
             return false;
         }
