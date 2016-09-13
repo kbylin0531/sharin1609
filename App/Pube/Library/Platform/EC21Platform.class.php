@@ -310,11 +310,22 @@ class EC21Platform extends Platform {
     }
 
     /**
+     * 设置注册验证码
      * @param string $capture
      * @return $this
      */
     public function setCapture($capture) {
-        $this->capture = $this->postCode($capture,Session::get('childId'));
+        $chid = Session::get('childId');
+        $url = 'http://www.ec21.com/global/captcha/captchaSubmit.jsp';
+        $content = HttpRequest::post($url,http_build_query(array( //application/x-www-form-urlencoded
+            'adcopy_response'   => $capture,
+            'adcopy_challenge'  => $chid,
+        )),$this->register_page_cookie);
+        if(preg_match('/dataForm\.captchaState\.value[\s]*=[\s]*\'(.*)\'/',$content,$matches) and isset($matches[1])){
+            $this->capture = $matches[1];
+        }else{
+            $this->error = '无法获取深度验证码';
+        }
         return $this;
     }
     /**
@@ -325,7 +336,6 @@ class EC21Platform extends Platform {
      */
     public function saveImage($img_path='',$chid='',$magic=''){
         $chid or $chid = $this->getChidId($magic);
-//        $img_path or $img_path = SR_PATH_RUNTIME.'/captures/'.md5($chid).'ec21.gif';
         $img_path or $img_path = '/dynamic/capture/'.md5($chid).'ec21.gif';
         $url = 'http://api.solvemedia.com/papi/media?c='.$chid.';w=300;h=100;fg=000000';
         $content = self::get($url,'',$this->register_image_cookie);
@@ -350,19 +360,6 @@ class EC21Platform extends Platform {
         $childId = $this->getChidId($magic);
         Session::set('childId',$childId);
         return $this->saveImage('',$childId);
-    }
-
-    public function postCode($code,$chid=''){
-        $chid or $chid = $this->getChidId();
-        $url = 'http://www.ec21.com/global/captcha/captchaSubmit.jsp';
-        $content = HttpRequest::post($url,http_build_query(array( //application/x-www-form-urlencoded
-            'adcopy_response'   => $code,
-            'adcopy_challenge'  => $chid,
-        )),$this->register_page_cookie);
-        if(preg_match("/dataForm\.captchaState\.value[\s]*=[\s]*\'(.*)\'/",$content,$matches) and isset($matches[1])){
-            return $matches[1];
-        }
-        return false;
     }
 
     /**

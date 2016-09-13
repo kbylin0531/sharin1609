@@ -200,7 +200,7 @@ abstract class Platform extends Ngine{
      */
     public function submit(){
         $result = HttpRequest::post($this->submitAddress,http_build_query($this->attrs),$this->cookie_login,true);
-        \Sharin\dumpout($this->submitAddress,http_build_query($this->attrs),$this->cookie_login,$result);
+//        \Sharin\dumpout($this->submitAddress,http_build_query($this->attrs),$this->cookie_login,$result);
         return $this->isSucmitSuccess($result);
     }
 
