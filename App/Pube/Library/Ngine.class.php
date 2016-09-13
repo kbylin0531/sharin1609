@@ -12,6 +12,13 @@ defined('PUBE_DATA_DIR') or define('PUBE_DATA_DIR',PUBE_BASE_DIR.'Data/');
 defined('PUBE_COOKIE_DIR') or define('PUBE_COOKIE_DIR',PUBE_DATA_DIR.'Cookie/');
 defined('PUBE_SCRIPT_DIR') or define('PUBE_SCRIPT_DIR',dirname($_SERVER['SCRIPT_FILENAME']).'/');
 
+define('PUBE_IS_HTTPS',   isset ($_SERVER ['HTTPS']) and $_SERVER ['HTTPS'] === 'on');
+define('PUBE_HTTP_PREFIX',PUBE_IS_HTTPS ? 'https://' : 'http://' );
+$script_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']),'/');
+define('PUBE_PUBLIC_URL',PUBE_HTTP_PREFIX.$_SERVER['SERVER_NAME'].((80 == $_SERVER['SERVER_PORT'])? $script_dir :
+        ":{$_SERVER['SERVER_PORT']}{$script_dir}"));
+define('PUBE_SCRIPT_URL',PUBE_PUBLIC_URL.'/index.php');
+
 define('NOW',$_SERVER['REQUEST_TIME']);
 
 abstract class Ngine {
@@ -25,6 +32,16 @@ abstract class Ngine {
                 if(is_readable($path)) include_once $_map[$clsnm] = $path;
             }
         },true,true);
+    }
+
+
+    private static $instances = [];
+    public static function getInstance(){
+        $clsnm = static::class;
+        if(!isset(self::$instances[$clsnm])){
+            self::$instances[$clsnm] = new $clsnm();
+        }
+        return self::$instances[$clsnm];
     }
 
     /**

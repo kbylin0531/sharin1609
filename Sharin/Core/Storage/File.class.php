@@ -8,6 +8,8 @@
  */
 namespace Sharin\Core\Storage;
 use Sharin\Core\Storage;
+use Sharin\Exceptions\IO\ReadAccessDenyException;
+use Sharin\Exceptions\IO\WriteAccessDenyException;
 use Sharin\Interfaces\Core\StorageInterface;
 use Sharin\SharinException;
 use Sharin\Utils;
@@ -44,7 +46,7 @@ class File implements StorageInterface {
         $temp = dirname($path);//修改的目录
         $path = Utils::toSystemEncode($path);
         is_string($scopes) and $scopes = [$scopes];
-
+//        \Sharin\dumpout($temp,$scopes);
         foreach ($scopes as $scope){
             if(Utils::checkInScope($temp,$scope)){
                 return true;
@@ -57,18 +59,26 @@ class File implements StorageInterface {
      * 检查是否有读取权限
      * @param string $path 路径
      * @return bool
+     * @throws ReadAccessDenyException
      */
     private function checkReadableWithRevise(&$path){
-        return $this->checkAccessableWithRevise($path,$this->config['READ_LIMIT_ON'],$this->config['READABLE_SCOPE']);
+        if(false === $this->checkAccessableWithRevise($path,$this->config['READ_LIMIT_ON'],$this->config['READABLE_SCOPE'])){
+            throw new ReadAccessDenyException($path,$this->config['READ_LIMIT_ON'],$this->config['READABLE_SCOPE']);
+        }
+        return true;
     }
 
     /**
      * 检查是否有写入权限
      * @param string $path 路径
      * @return bool
+     * @throws WriteAccessDenyException
      */
     private function checkWritableWithRevise(&$path){
-        return $this->checkAccessableWithRevise($path,$this->config['WRITE_LIMIT_ON'],$this->config['WRITABLE_SCOPE']);
+        if(false === $this->checkAccessableWithRevise($path,$this->config['WRITE_LIMIT_ON'],$this->config['WRITABLE_SCOPE'])){
+            throw new WriteAccessDenyException($path,$this->config['WRITE_LIMIT_ON'],$this->config['WRITABLE_SCOPE']);
+        }
+        return true;
     }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -89,32 +99,30 @@ class File implements StorageInterface {
     public function readDir($dirpath, $recursion=false, $_isouter=true){
         static $_file = [];
         static $_dirpath_toread = null;
-        if(!$this->checkReadableWithRevise($filepath)) return null;
-
-        if(true === $_isouter){
-            //外部调用,初始化
-            $_file = [];
-            $_dirpath_toread = $dirpath;
-        }
-
-        $handler = opendir($dirpath);
-        while (($filename = readdir( $handler )) !== false) {//未读到最后一个文件时候返回false
-            if ($filename === '.' or $filename === '..' ) continue;
-
-            $fullpath = "{$dirpath}/{$filename}";//子文件的完整路径
-
-            if(file_exists($fullpath)) {
-                $index = strpos($fullpath,$_dirpath_toread);
-                $_file[Utils::toProgramEncode(substr($fullpath,$index+strlen($_dirpath_toread)))] =
-                    str_replace('\\','/',Utils::toProgramEncode($fullpath));
+        if($this->checkReadableWithRevise($dirpath)) {
+            if(true === $_isouter){
+                //外部调用,初始化
+                $_file = [];
+                $_dirpath_toread = $dirpath;
             }
 
-            if($recursion and is_dir($fullpath)) {
-                $_isouter = "{$_isouter}/{$filename}";
-                $this->readDir($fullpath,$recursion,false);//递归,不清空
+            $handler = opendir($dirpath);
+            while (($filename = readdir($handler))) {//未读到最后一个文件时候返回false,否则返回文件名称
+                if ($filename === '.' or $filename === '..' ) continue;
+                $fullpath = $dirpath.DIRECTORY_SEPARATOR.$filename;//子文件的完整路径
+                if(file_exists($fullpath)) {
+                    $index = strpos($fullpath,$_dirpath_toread);
+                    $_file[Utils::toProgramEncode(substr($fullpath,$index+strlen($_dirpath_toread)))] =
+                        str_replace('\\','/',Utils::toProgramEncode($fullpath));
+                }
+
+                if($recursion and is_dir($fullpath)) {
+                    $_isouter = "{$_isouter}/{$filename}";
+                    $this->readDir($fullpath,$recursion,false);//递归,不清空
+                }
             }
+            closedir($handler);//关闭目录指针
         }
-        closedir($handler);//关闭目录指针
         return $_file;
     }
     /**

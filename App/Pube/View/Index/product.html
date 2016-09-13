@@ -50,7 +50,8 @@
                 var row = dtable.data($(this).closest("tr"));
 //                console.log(row);return ;
                 $.post('__ACTION__',row,function (data) {
-                    console.log(data);
+//                    console.log(data);
+                    alert(data.message);
                 });
             });
 

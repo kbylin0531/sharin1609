@@ -30,6 +30,8 @@ const ACTION_SELECT = 0;//查询操作,将使用到$_fields和$_where字段
 const ACTION_CREATE = 1;//添加操作,将使用到$_fields字段
 const ACTION_UPDATE = 2;//更新操作,将使用到$_fields和$_where字段
 const ACTION_DELETE = 3;//删除操作,将使用到$_where字段
+//其他
+const DS = DIRECTORY_SEPARATOR;
 
 if(PHP_SAPI === 'cli') {include realpath(__DIR__.'/../console.engine.php');exit;}//console.engine will do something different from web.engin
 
@@ -53,11 +55,18 @@ const SR_PATH_CONFIG    = SR_PATH_BASE.'/Config';
 const SR_PATH_RUNTIME   = SR_PATH_BASE.'/Runtime';
 const SR_PATH_PUBLIC    = SR_PATH_BASE.'/Public';
 
+//------------------------- 应用生命周期内的各个阶段 --------------------------------------//
 const ON_INIT       = 'onInit';
 const ON_INITED     = 'onInited';
 const ON_START      = 'onStart';
 const ON_ROUTE      = 'onRoute';
 const ON_CHECK      = 'onCheck';
 const ON_DISPATCH   = 'onDispatch';
-const ON_STOP       = 'onStop';
+const ON_STOP       = 'onStop';//应用停止运行的阶段
 const ON_SHUTDOWN   = 'onShutdown';
+//特殊阶段
+const ON_EXCEPTION  = 'onException';
+const ON_EXCEPTION_END  = 'onExceptionEnd';
+const ON_ERROR      = 'onError';
+const ON_ERROR_END  = 'onErrorEnd';
+

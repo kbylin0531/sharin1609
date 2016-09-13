@@ -12,6 +12,7 @@ use Sharin\Core;
 /**
  * Class Storage
  * @method mixed read(string $filepath, string $file_encoding = null, bool $recursion = false) static 获取文件内容
+ * @method array readDir(string $dirpath,bool $recursion=false,bool $_isouter=true) static 获取文件夹下的内容
  * @method int has(string $filepath) static 确定文件或者目录是否存在
  * @method int|bool mtime(string $filepath, int $mtime = null) static 返回文件内容上次的修改时间
  * @method int|false size(string $filepath) static 获取文件按大小

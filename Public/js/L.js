@@ -3,20 +3,19 @@
  * 不支持IE8及以下的浏览器
  *  ① querySelector() 方法仅仅返回匹配指定选择器的第一个元素。如果你需要返回所有的元素，请使用 querySelectorAll() 方法替代。
  */
-/*!art-template - Template Engine | http://aui.github.com/artTemplate/*/
-window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完毕之后的回调 */
+;(function (loadone) {/* loadone 方法是在全部的ready家在完毕之后的回调 */
     "use strict";/* save time  */
     var options = {
         //公共资源的URL路径
         public_url: ''
     };
-    var ReadyStack = {
+    var ReadyGoo = {
         heap:[],/*fifo*/
         stack:[]/*folo*/
     };
 
     //传递给loadone方法的
-    var Pass = {
+    var pps = {
         plugins:[] /*插件加载队列*/
     };
 
@@ -24,9 +23,9 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
      * 標記頁面是否家在完畢
      * @type {boolean}
      */
-    var pagedone = false;
+    var ild = false;
 
-    var _headTag = null;
+    var _ht = null;
 
     //常见的兼容性问题处理
     (function () {
@@ -57,10 +56,32 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
         if (!String.prototype.ltrim) String.prototype.ltrim = function () { return this.replace(/(^\s*)/g, ''); };
         if (!String.prototype.rtrim)  String.prototype.rtrim = function () { return this.replace(/(\s*$)/g, ''); };
         if (!String.prototype.beginWith) String.prototype.beginWith = function (chars) { return this.indexOf(chars) === 0; };
+        // 对Date的扩展，将 Date 转化为指定格式的String
+        // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+        // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+        // 例子：
+        // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+        // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+        Date.prototype.format = function (fmt,timestamp) { //author: meizz
+            timestamp && this.setTime(parseInt(timestamp)*1000);
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
     })();
 
-    //script library
-    var ScriptLib = {
+    //resource library
+    var rL = {
         _: {},
         posNm: function (name) {/*parse name*/
             if (name.indexOf('/') >= 0) {
@@ -115,7 +136,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
 
         throw new Error("Unable to copy obj! Its type isn't supported.");
     };
-    var _path = function (path) {
+    var _p = function (path) {
         if ((path.length > 4) && (path.substr(0, 4) !== 'http')) {
             if (!options['public_url']) options['public_url'] = '/';//throw "Public uri not defined!";
             path = options['public_url'] + path;
@@ -125,9 +146,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
     var guid = function () {
         var s = [];
         var hexDigits = "0123456789abcdef";
-        for (var i = 0; i < 36; i++) {
-            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-        }
+        for (var i = 0; i < 36; i++) s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
         s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
         s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
         s[8] = s[13] = s[18] = s[23] = "-";
@@ -262,8 +281,8 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             return res;
         },
         ie: function () {/* get the version of ie */
-            var version;
-            return ((version = navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/))?parseInt(version[1]):12);//如果是其他浏览器，默认判断为版本12
+            var info = this.getBrowser();
+            return info.type === "ie"?info.version:11;
         },
         /**
          * 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符,年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
@@ -388,34 +407,6 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
                 console.log(obj);
                 throw "expect param 1 tobe array/object";
             }
-        },
-        /**
-         * 停止事件冒泡
-         * 如果提供了事件对象，则这是一个非IE浏览器,因此它支持W3C的stopPropagation()方法
-         * 否则，我们需要使用IE的方式来取消事件冒泡
-         * @param e
-         */
-        stopBubble: function (e) {
-            if (e && e.stopPropagation) {
-                e.stopPropagation();
-            } else {
-                window.event.cancelBubble = true;
-            }
-        },
-        /**
-         * 阻止事件默认行为
-         * 阻止默认浏览器动作(W3C)
-         * IE中阻止函数器默认动作的方式
-         * @param e
-         * @returns {boolean}
-         */
-        stopDefault: function (e) {
-            if (e && e.preventDefault) {
-                e.preventDefault();
-            } else {
-                window.event.returnValue = false;
-            }
-            return false;
         }
     };
     /**
@@ -487,18 +478,18 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
         if (document.readyState === "complete" || document.readyState === "loaded"){
             document.onreadystatechange = null;
             var i ;
-            for (i = 0; i < ReadyStack.heap.length; i++) (ReadyStack.heap[i])();
-            for (i = ReadyStack.stack.length -1; i >= 0; i--) (ReadyStack.stack[i])();
-            pagedone = true;
-            O.isFunc(loadone) && loadone(Pass);
+            for (i = 0; i < ReadyGoo.heap.length; i++) (ReadyGoo.heap[i])();
+            for (i = ReadyGoo.stack.length -1; i >= 0; i--) (ReadyGoo.stack[i])();
+            ild = true;
+            O.isFunc(loadone) && loadone(pps);
         }
     };
 
-    return {
+    window.L = {
         jq: jq,
         guid: guid,//随机获取一个GUID
         clone: clone,
-            getRstype:function (path) {/* 获取资源类型 */
+        getRstype:function (path) {/* 获取资源类型 */
             var type = path.substring(path.length - 3);
             switch (type) {
                 case 'css':
@@ -545,7 +536,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
                 }
             } else {
                 if (!type) type = this.getRstype(path);
-                if(ScriptLib.has(path)){
+                if(rL.has(path)){
                     /* 本页面加载过将不再重新载入
                      * 如果库在之前定义过(那么制定到这里的时候一定是加载过的，因为之后加在完成才能执行回调序列)
                      * 可以直接视为加在完毕
@@ -556,18 +547,18 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
                     //注意的是，直接使用document.write('<link .....>') 可能導致html頁面混亂。。。
                     switch (type) {
                         case 'css':
-                            L.loadStyle( _path(path));
+                            L.lsty( _p(path));
                             call.call();/* style资源可有可无，可以视为立即加载完毕 */
                             break;
                         case 'js':
-                            L.loadScript(_path(path),call);
+                            L.lscr(_p(path),call);
                             break;
                         case 'ico':
-                            L.loadIcon(_path(path));
+                            L.licon(_p(path));
                             call.call();/* ico资源可有可无，可以视为立即加载完毕 */
                             break;
                     }
-                    ScriptLib.add(path);
+                    rL.add(path);
                 }
             }
             return this;
@@ -601,33 +592,33 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             if (ih) el.innerHTML = ih;
             return el;
         },
-        attach2Head:function (ele) {
-            if(!_headTag) _headTag = document.getElementsByTagName("head")[0];
-            _headTag.appendChild(ele);
+        a2H:function (ele) {
+            if(!_ht) _ht = document.getElementsByTagName("head")[0];
+            _ht.appendChild(ele);
             return ele;
         },
         /* ps:icon是否加在成功无关紧要 */
-        loadIcon:function(path){
-            this.attach2Head(this.newEle("link",{
+        licon:function(path){
+            this.a2H(this.newEle("link",{
                 href:path,
                 rel:"shortcut icon"
             }));
         },
         /* ps:样式表是否加在成功无关紧要 */
-        loadStyle:function (path) {
-            this.attach2Head(this.newEle("link",{
+        lsty:function (path) {
+            this.a2H(this.newEle("link",{
                 href:path,
                 rel:"stylesheet",
                 type:"text/css"
             }));
         },
-        loadScript: function (url, callback){
-            this.readyNext(this.attach2Head(this.newEle("script",{
+        lscr: function (url, callback){
+            this.rN(this.a2H(this.newEle("script",{
                 src:url,
                 type:"text/javascript"
             })),callback);
         },
-        readyNext:function (ele,callback) {
+        rN:function (ele,callback) {/* ready next */
             if (ele.readyState){ //IE
                 ele.onreadystatechange = function(){
                     if (ele.readyState == "loaded" || ele.readyState == "complete"){
@@ -702,7 +693,7 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             return instance;
         },//获取一个单例的操作对象作为上下文环境的深度拷贝
         ready: function (c,prepend) {
-            prepend?ReadyStack.stack.push(c):ReadyStack.heap.push(c);
+            prepend?ReadyGoo.stack.push(c):ReadyGoo.heap.push(c);
         },
         //plugins
         P: {
@@ -721,37 +712,37 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
             },
             load:function(pnm,call){/* plugin name, callback */
                 if(pnm in this.JsMap) pnm = this.JsMap[pnm];
-                if(pagedone){
+                if(ild){
                     /* it will not put into quene if page has load done！ */
                     L.load(pnm,null,call);
                 }else{
-                    Pass.plugins.push([pnm,call]);
+                    pps.plugins.push([pnm,call]);
                 }
                 return this;
             },
             /**
-             * @param selector
-             * @param options
-             * @param functionName
-             * @param pluginName
-             * @param callback callback while on loaded
+             * @param sele
+             * @param opts
+             * @param funcNm
+             * @param pluNm
+             * @param call callback while on loaded
              */
-            initlize:function(selector,options,functionName,pluginName,callback){
-                pluginName = pluginName?pluginName:functionName;
+            initlize:function(sele,opts,funcNm,pluNm,call){
+                pluNm = pluNm?pluNm:funcNm;
                 var jq = this._jq?this._jq:(this._jq = $());
-                L.load(this.JsMap[pluginName],null,function () {
-                    if(!L.O.isObj(selector) || (selector instanceof jQuery)){
-                        selector = $(selector);
-                        options || (options = {});
-                        (functionName in jq) && (jq[functionName]).apply(selector,O.isArr(options)?options:[options]);
-                        callback && callback(selector);
+                L.load(this.JsMap[pluNm],null,function () {
+                    if(!L.O.isObj(sele) || (sele instanceof jQuery)){
+                        sele = $(sele);
+                        opts || (opts = {});
+                        (funcNm in jq) && (jq[funcNm]).apply(sele,O.isArr(opts)?opts:[opts]);
+                        call && call(sele);
                     }else{
                         var list = [];
-                        L.U.each(selector,function (params,k) {
+                        L.U.each(sele,function (params,k) {
                            list.push( k = $(k));
-                            (functionName in jq) && (jq[functionName]).apply(k,O.isArr(params)?params:[params]);
+                            (funcNm in jq) && (jq[funcNm]).apply(k,O.isArr(params)?params:[params]);
                         });
-                        callback && callback(list);
+                        call && call(list);
                     }
                 });
             }
@@ -760,13 +751,12 @@ window.L = (function (loadone) {/* loadone 方法是在全部的ready家在完�
         V: {}//constant or config// judge
 
     };
-})(function (pass) {
+})(function (pps) {
     //插件加载(按序進行)
-    var len = pass.plugins.length;
     var loadQuene = function (i) {
-        if(i < len){
-            L.load(pass.plugins[i][0],null,function () {
-                var call = pass.plugins[i][1];
+        if(i < pps.plugins.length){
+            L.load(pps.plugins[i][0],null,function () {
+                var call = pps.plugins[i][1];
                 call && call();
                 loadQuene(++i);
             });

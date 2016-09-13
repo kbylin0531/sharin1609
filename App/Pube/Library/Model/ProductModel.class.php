@@ -14,7 +14,15 @@ use Library\Utils\SQLite;
 /**
  * Class Product
  *
- * pid,name,image,url,atime,platform,type
+ * @property
+ * @property int $pid
+ * @property string $name
+ * @property string $image
+ * @property string $url
+ * @property string $atime
+ * @property string $platform
+ * @property string $type
+ * @property string $uname
  *
  * @package Library\Model
  */
@@ -33,4 +41,11 @@ class ProductModel extends SQLite {
         'uname' => '',//username
     ];
 
+    /**
+     * @param string $dsn
+     * @return ProductModel
+     */
+    public static function getInstance($dsn = ''){
+        return parent::getInstance($dsn);
+    }
 }

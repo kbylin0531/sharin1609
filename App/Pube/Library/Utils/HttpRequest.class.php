@@ -30,14 +30,30 @@ class HttpRequest {
 
     /**
      * 模拟post请求
-     * @param string $url
-     * @param string|array $fields
-     * @param string|null $cookie 是否使用cookie，默认不启用
-     * @param bool $withHead 返回值是否带header
+     * @param $url
+     * @param $fields
+     * @param $cookie
+     * @param bool $header
+     * @param array $opts
      * @return string
      */
-    public static function post($url,$fields,$cookie=null,$withHead=true,$build=false){
-        return self::request(self::METHOD_POST,$url,$fields,$cookie,$withHead,$build);
+    public static function post($url, $fields, $cookie, $header=false, array $opts=[]){
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, $header); //将头文件的信息作为数据流输出
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        if($cookie){
+            if(strpos($cookie,'/') === 0){
+                Ngine::touch($cookie);
+            }
+            curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie);
+            curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
+        }
+        if($opts) foreach ($opts as $k=> $v){ curl_setopt($ch,$k,$v); }
+
+        $content = curl_exec($ch);
+        curl_close($ch);
+        return false === $content ? '': (string)$content;
     }
 
 

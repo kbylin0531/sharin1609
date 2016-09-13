@@ -8,6 +8,7 @@
  */
 
 namespace App\Home\Controller;
+use Sharin\Core\Storage;
 
 /**
  * Class A
@@ -56,6 +57,11 @@ class C extends A {
 class Index {
 
     public function index(){
+        $dir = Storage::readDir(SR_PATH_APP);
+        \Sharin\dumpout($dir);
+    }
+
+    public function testExtend(){
         $a = new A();
 
         //static

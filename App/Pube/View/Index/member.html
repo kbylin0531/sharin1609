@@ -37,7 +37,7 @@
                         data:'email'
                     },
                     {
-                        title:'sum',
+                        title:'total',
                         data:'total'
                     },
                     {
@@ -65,8 +65,11 @@
                             $.post("__ACTION__",$("#form").serialize(),function (data) {
                                 //添加到新的一行
                                 dtable.load([{
-                                    count:0,
-                                    value:data.value
+                                    username:data.value.username,
+                                    passwd:data.value.passwd,
+                                    email:data.value.email,
+                                    total:0,
+                                    cateid:data.value['gid']
                                 }],false);
                                 modal.hide();
                             });
@@ -77,7 +80,7 @@
                     show:function () {
                         loadone = false;
                         var tip = $("#capture_tip").show();
-                        $.get("__CONTROLLER__/getImage",function (data) {
+                        $.get("__ACTION__?action=capture",function (data) {
                             $("#capture").attr("src",data.src);
                             tip.hide();
                             loadone = true;

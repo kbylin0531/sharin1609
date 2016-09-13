@@ -91,4 +91,8 @@ abstract class SQLite extends \PDO{
         return $this->exec($sql);
     }
 
+    public function getError(){
+        $info = $this->errorInfo();
+        return $info[2];
+    }
 }

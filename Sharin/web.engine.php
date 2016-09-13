@@ -609,14 +609,15 @@ namespace Sharin {
     class SharinException extends Exception {
 
         /**
-         * Construct the exception. Note: The message is NOT binary safe.
-         * @link http://php.net/manual/en/exception.construct.php
-         * @param string $message [optional] The Exception message to throw.
-         * @param int $code [optional] The Exception code.
-         * @param \Exception $previous [optional] The previous exception used for the exception chaining. Since 5.3.0
-         * @since 5.1.0
+         * SharinException constructor.
          */
-        public function __construct($message, $code=0, \Exception $previous=null){
+        public function __construct(){
+            $args = func_get_args();
+            if(count($args) > 1){
+                $message = var_export($args,true);
+            }else{
+                $message = $args[0];
+            }
             $this->message = is_string($message)?$message:var_export($message,true);
         }
 
@@ -637,56 +638,125 @@ namespace Sharin {
          * @return void
          */
         final public static function handleException($e) {
-            if(SR_IS_AJAX){
-                exit($e->getMessage());
-            }
-            SR_EXCEPTION_CLEAN and ob_get_level() > 0 and ob_end_clean();
-            SR_DEBUG_MODE_ON or Response::sendHttpStatus(403,'Resource Exception!');
-            $trace = $e->getTrace();
-            if(!empty($trace[0])){
-                empty($trace[0]['file']) and $trace[0]['file'] = 'Unkown file';
-                empty($trace[0]['line']) and $trace[0]['line'] = 'Unkown line';
+            Behaviour::listen('onException');
+            // disable error capturing to avoid recursive errors
+            restore_error_handler();
+            restore_exception_handler();
 
-                $vars = [
-                    'message'   => get_class($e).' : '.$e->getMessage(),
-                    'position'  => 'File:'.$trace[0]['file'].'   Line:'.$trace[0]['line'],
-                    'trace'     => $trace,
-                ];
-                if(SR_DEBUG_MODE_ON){
-                    Utils::loadTemplate('exception',$vars);
-                }else{
-                    Utils::loadTemplate('user_error');
-                }
-            }else{
-                Utils::loadTemplate('user_error');
+            if(SR_DEBUG_MODE_ON) {
+                echo '<h1>'.get_class($e)."</h1>\n";
+                echo '<p>'.$e->getMessage().' ('.$e->getFile().':'.$e->getLine().')</p>';
+                echo '<pre>'.$e->getTraceAsString().'</pre>';
+            } else {
+                echo '<h1>'.get_class($e)."</h1>\n";
+                echo '<p>'.$e->getMessage().'</p>';
             }
-            exit;
+
+            Behaviour::listen('onExceptionEnd');
+//            if(SR_IS_AJAX){
+//                exit($e->getMessage());
+//            }
+//            SR_EXCEPTION_CLEAN and ob_get_level() > 0 and ob_end_clean();
+//            SR_DEBUG_MODE_ON or Response::sendHttpStatus(403,'Resource Exception!');
+//            $trace = $e->getTrace();
+//            if(!empty($trace[0])){
+//                empty($trace[0]['file']) and $trace[0]['file'] = 'Unkown file';
+//                empty($trace[0]['line']) and $trace[0]['line'] = 'Unkown line';
+//
+//                $vars = [
+//                    'message'   => get_class($e).' : '.$e->getMessage(),
+//                    'position'  => 'File:'.$trace[0]['file'].'   Line:'.$trace[0]['line'],
+//                    'trace'     => $trace,
+//                ];
+//                if(SR_DEBUG_MODE_ON){
+//                    Utils::loadTemplate('exception',$vars);
+//                }else{
+//                    Utils::loadTemplate('user_error');
+//                }
+//            }else{
+//                Utils::loadTemplate('user_error');
+//            }
+//            exit;
         }
 
+
         /**
-         * handel the error
-         * @param int $errno error number
-         * @param string $errstr error message
-         * @param string $errfile error occurring file
-         * @param int $errline error occurring file line number
+         * @param $code
+         * @param $message
+         * @param $file
+         * @param $line
          * @return void
          */
-        final public static function handleError($errno,$errstr,$errfile,$errline){
-            SR_EXCEPTION_CLEAN and ob_get_level() > 0 and ob_end_clean();
-            if(!is_string($errstr)) $errstr = serialize($errstr);
-            $trace = debug_backtrace();
-            $vars = [
-                'message'   => "C:{$errno}   S:{$errstr}",
-                'position'  => "File:{$errfile}   Line:{$errline}",
-                'trace'     => $trace, //be careful
-            ];
-            SR_DEBUG_MODE_ON or Response::sendHttpStatus(403,'Resource Error!');
-            if(SR_DEBUG_MODE_ON){
-                Utils::loadTemplate('error',$vars);
-            }else{
-                Utils::loadTemplate('user_error');
+        final public static function handleError($code,$message,$file,$line){
+            Behaviour::listen('onError');
+            if($code & error_reporting()) {
+                // disable error capturing to avoid recursive errors
+                restore_error_handler();
+                restore_exception_handler();
+
+                $log="$message ($file:$line)\nStack trace:\n";
+                $trace=debug_backtrace();
+                // skip the first 3 stacks as they do not tell the error position
+                if(count($trace)>3)
+                    $trace=array_slice($trace,3);
+                foreach($trace as $i=>$t) {
+                    if(!isset($t['file']))
+                        $t['file']='unknown';
+                    if(!isset($t['line']))
+                        $t['line']=0;
+                    if(!isset($t['function']))
+                        $t['function']='unknown';
+                    $log.="#$i {$t['file']}({$t['line']}): ";
+                    if(isset($t['object']) && is_object($t['object']))
+                        $log.=get_class($t['object']).'->';
+                    $log.="{$t['function']}()\n";
+                }
+
+                if(SR_DEBUG_MODE_ON) {
+                    echo "<h1>PHP Error [$code]</h1>\n";
+                    echo "<p>$message ($file:$line)</p>\n";
+                    echo '<pre>';
+
+                    $trace=debug_backtrace();
+                    // skip the first 3 stacks as they do not tell the error position
+                    if(count($trace)>3)
+                        $trace=array_slice($trace,3);
+                    foreach($trace as $i=>$t) {
+                        if(!isset($t['file']))
+                            $t['file']='unknown';
+                        if(!isset($t['line']))
+                            $t['line']=0;
+                        if(!isset($t['function']))
+                            $t['function']='unknown';
+                        echo "#$i {$t['file']}({$t['line']}): ";
+                        if(isset($t['object']) && is_object($t['object']))
+                            echo get_class($t['object']).'->';
+                        echo "{$t['function']}()\n";
+                    }
+
+                    echo '</pre>';
+                } else {
+                    echo "<h1>PHP Error [$code]</h1>\n";
+                    echo "<p>$message</p>\n";
+                }
             }
-            exit;
+            Behaviour::listen('onErrorEnd');
+
+//            SR_EXCEPTION_CLEAN and ob_get_level() > 0 and ob_end_clean();
+//            if(!is_string($errstr)) $errstr = serialize($errstr);
+//            $trace = debug_backtrace();
+//            $vars = [
+//                'message'   => "C:{$errno}   S:{$errstr}",
+//                'position'  => "File:{$errfile}   Line:{$errline}",
+//                'trace'     => $trace, //be careful
+//            ];
+//            SR_DEBUG_MODE_ON or Response::sendHttpStatus(403,'Resource Error!');
+//            if(SR_DEBUG_MODE_ON){
+//                Utils::loadTemplate('error',$vars);
+//            }else{
+//                Utils::loadTemplate('user_error');
+//            }
+//            exit;
         }
     }
 

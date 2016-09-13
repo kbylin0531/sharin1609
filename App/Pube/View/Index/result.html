@@ -5,8 +5,14 @@
         <table id="dtable" class="table table-striped table-bordered" cellspacing="0" width="100%"></table>
     </div>
 </block>
+<block name="style">
+    <style>
+        .img { height:100px; width: 100px; }
+    </style>
+</block>
 <block name="script">
     <script>
+        var date = new Date();
         L.P.load('jq').load('bs').load('dt',function () {
             var dtable = L.P.datatables.create('#dtable',{
                 columns: [
@@ -15,7 +21,7 @@
                         data:'pid'
                     },
                     {
-                        title:'name',
+                        title:'pname',
                         data:'name'
                     },
                     {
@@ -26,7 +32,9 @@
                     },
                     {
                         title:'atime',
-                        data:'atime'
+                        data:function (row) {
+                            return date.format("yyyy-MM-dd",row.atime);
+                        }
                     },
                     {
                         title:'platform',
@@ -34,7 +42,9 @@
                     },
                     {
                         title:'type',
-                        data:'type'
+                        data:function (row) {
+                            return parseInt(row.type)?'成功':'失败';
+                        }
                     },
                     {
                         title:'uname',
@@ -43,12 +53,11 @@
                     {
                         title:'image',
                         data:function (row) {
-                            return '<img src="'+row.image+'" />';
+                            return '<img src="'+row.image+'" class="img"/>';
                         }
                     }
                 ]
             }).load(L.O.toObj('{$data}'));
-
         });
     </script>
 </block>
