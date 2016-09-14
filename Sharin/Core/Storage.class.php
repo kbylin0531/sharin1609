@@ -171,4 +171,53 @@ class Storage extends Core {
             $World['r'].$World['w'].$World['e'];
         return $Mode.' ('.$theMode.') ';
     }
+
+    /**
+     * 拷贝目录
+     * 选自Kokexplorer/file.function.php
+     * eg:将D:/wwwroot/下面wordpress复制到
+     *	D:/wwwroot/www/explorer/0000/del/1/
+     * 末尾都不需要加斜杠，复制到地址如果不加源文件夹名，
+     * 就会将wordpress下面文件复制到D:/wwwroot/www/explorer/0000/del/1/下面
+     * $from = 'D:/wwwroot/wordpress';
+     * $to = 'D:/wwwroot/www/explorer/0000/del/1/wordpress';
+     *
+     * @param string $source
+     * @param string $dest
+     * @return bool
+     */
+    public static function copyDir($source, $dest){
+        $result = false;
+        if (!$dest or $source == substr($dest,0,strlen($source))) return false;//防止父文件夹拷贝到子文件夹，无限递归
+        if (is_file($source)) {
+            if ($dest[strlen($dest)-1] == '/') {
+                $__dest = $dest . "/" . basename($source);
+            } else {
+                $__dest = $dest;
+            }
+            $result = copy($source, $__dest);
+            chmod($__dest, 0777);
+        }elseif (is_dir($source)) {
+            if ($dest[strlen($dest)-1] == '/') {
+                $dest = $dest . basename($source);
+            }
+            if (!is_dir($dest)) {
+                mkdir($dest,0777);
+            }
+            if (!$dh = opendir($source)) return false;
+            while (($file = readdir($dh)) !== false) {
+                if ($file != "." && $file != "..") {
+                    if (!is_dir($source . "/" . $file)) {
+                        $__dest = $dest . "/" . $file;
+                    } else {
+                        $__dest = $dest . "/" . $file;
+                    }
+                    $result = copy_dir($source . "/" . $file, $__dest);
+                }
+            }
+            closedir($dh);
+        }
+        return $result;
+    }
+
 }

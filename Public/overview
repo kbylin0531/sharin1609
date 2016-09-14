@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overview</title>
+</head>
+<body>
+
+<ul>
+    <li>
+        <a href="index.php" target="_blank">Home</a>
+    </li>
+    <li>
+        <a href="explorer.php" target="_blank">Explorer</a>
+    </li>
+    <li>
+        <a href="adminer.php" target="_blank">MySQL</a>
+    </li>
+    <li>
+        <a href="phpliteadmin.php" target="_blank">SQLite3</a>
+    </li>
+</ul>
+
+</body>
+</html>

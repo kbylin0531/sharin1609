@@ -317,28 +317,27 @@ namespace {
      */
     function path_list($dir,$list_file=true,$check_children=false){
         $dir = rtrim($dir,'/').'/';
-        if (!is_dir($dir) || !($dh = opendir($dir))){
-            return array('folderlist'=>array(),'filelist'=>array());
-        }
-        $folderlist = array();$filelist = array();//文件夹与文件
-        while (($file = readdir($dh)) !== false) {
-            if ($file != "." && $file != ".." && $file != ".svn" ) {
-                $fullpath = $dir . $file;
-                if (is_dir($fullpath)) {
-                    $info = folder_info($fullpath);
-                    if($check_children){
-                        $info['isParent'] = path_haschildren($fullpath,$list_file);
+        $folderlist = $filelist = [];//文件夹与文件
+        if (is_dir($dir) and ($dh = opendir($dir))){
+            while (($file = readdir($dh)) !== false) {
+                if ($file != "." && $file != ".." && $file != ".svn" ) {
+                    $fullpath = $dir . $file;
+                    if (is_dir($fullpath)) {
+                        $info = folder_info($fullpath);
+                        if($check_children){
+                            $info['isParent'] = path_haschildren($fullpath,$list_file);
+                        }
+                        $folderlist[] = $info;
+                    } else if($list_file) {//是否列出文件
+                        $info = file_info($fullpath);
+                        if($check_children) $info['isParent'] = false;
+                        $filelist[] = $info;
                     }
-                    $folderlist[] = $info;
-                } else if($list_file) {//是否列出文件
-                    $info = file_info($fullpath);
-                    if($check_children) $info['isParent'] = false;
-                    $filelist[] = $info;
                 }
             }
+            closedir($dh);
         }
-        closedir($dh);
-        return array('folderlist' => $folderlist,'filelist' => $filelist);
+        return ['folderlist' => $folderlist,'filelist' => $filelist];
     }
 
     // 判断文件夹是否含有子内容【区分为文件或者只筛选文件夹才算】
@@ -368,13 +367,14 @@ namespace {
      * @return bool
      */
     function del_file($fullpath){
-        if (!@unlink($fullpath)) { // 删除不了，尝试修改文件权限
-            @chmod($fullpath, 0777);
-            if (!@unlink($fullpath)) {
-                return false;
-            }
-        }
-        return true;
+        return false;
+//        if (!@unlink($fullpath)) { // 删除不了，尝试修改文件权限
+//            @chmod($fullpath, 0777);
+//            if (!@unlink($fullpath)) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     /**
@@ -383,31 +383,32 @@ namespace {
      * @return bool
      */
     function del_dir($dir){
-        if (!$dh = opendir($dir)) return false;
-        while (($file = readdir($dh)) !== false) {
-            if ($file != "." && $file != "..") {
-                $fullpath = $dir . '/' . $file;
-                if (!is_dir($fullpath)) {
-                    if (!unlink($fullpath)) { // 删除不了，尝试修改文件权限
-                        chmod($fullpath, 0777);
-                        if (!unlink($fullpath)) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if (!del_dir($fullpath)) {
-                        chmod($fullpath, 0777);
-                        if (!del_dir($fullpath)) return false;
-                    }
-                }
-            }
-        }
-        closedir($dh);
-        if (rmdir($dir)) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
+//        if (!$dh = opendir($dir)) return false;
+//        while (($file = readdir($dh)) !== false) {
+//            if ($file != "." && $file != "..") {
+//                $fullpath = $dir . '/' . $file;
+//                if (!is_dir($fullpath)) {
+//                    if (!unlink($fullpath)) { // 删除不了，尝试修改文件权限
+//                        chmod($fullpath, 0777);
+//                        if (!unlink($fullpath)) {
+//                            return false;
+//                        }
+//                    }
+//                } else {
+//                    if (!del_dir($fullpath)) {
+//                        chmod($fullpath, 0777);
+//                        if (!del_dir($fullpath)) return false;
+//                    }
+//                }
+//            }
+//        }
+//        closedir($dh);
+//        if (rmdir($dir)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     /**
@@ -423,39 +424,7 @@ namespace {
      * @return bool|void
      */
     function copy_dir($source, $dest){
-        if (!$dest) return false;
-
-        if ($source == substr($dest,0,strlen($source))) return false;//防止父文件夹拷贝到子文件夹，无限递归
-        $result = false;
-        if (is_file($source)) {
-            if ($dest[strlen($dest)-1] == '/') {
-                $__dest = $dest . "/" . basename($source);
-            } else {
-                $__dest = $dest;
-            }
-            $result = copy($source, $__dest);
-            chmod($__dest, 0777);
-        }elseif (is_dir($source)) {
-            if ($dest[strlen($dest)-1] == '/') {
-                $dest = $dest . basename($source);
-            }
-            if (!is_dir($dest)) {
-                mkdir($dest,0777);
-            }
-            if (!$dh = opendir($source)) return false;
-            while (($file = readdir($dh)) !== false) {
-                if ($file != "." && $file != "..") {
-                    if (!is_dir($source . "/" . $file)) {
-                        $__dest = $dest . "/" . $file;
-                    } else {
-                        $__dest = $dest . "/" . $file;
-                    }
-                    $result = copy_dir($source . "/" . $file, $__dest);
-                }
-            }
-            closedir($dh);
-        }
-        return $result;
+        Storage::copyDir($source, $dest);
     }
 
     /**

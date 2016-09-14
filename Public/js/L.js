@@ -7,7 +7,8 @@
     "use strict";/* save time  */
     var options = {
         //公共资源的URL路径
-        public_url: ''
+        public_url: '',
+        position:''
     };
     var ReadyGoo = {
         heap:[],/*fifo*/
@@ -79,6 +80,24 @@
             return fmt;
         }
     })();
+    /**
+     * get position
+     * @returns {string}
+     */
+    var gP = function () {
+        if(!options.position){
+            //get the position of this file
+            var scripts = document.getElementsByTagName("script");
+            for(var x in scripts){
+                var script = scripts[x];
+                if(script.src && (script.src.indexOf("/L.js") > 0)){
+                    options.position = script.src.replace("/L.js","/");
+                    break;
+                }
+            }
+        }
+        return options.position;
+    };
 
     //resource library
     var rL = {
@@ -505,6 +524,17 @@
                     throw "wrong type'" + t + "',it must be[css,js,ico]";
             }
             return type;
+        },
+        /**
+         * 使用内置模块
+         * @param module
+         * @param call
+         * @returns {L}
+         */
+        use:function (module,call) {
+            var scr = gP()+"L/"+module+".js";
+            this.load(scr,'js',call);
+            return this;
         },
         /**
          * load resource for page

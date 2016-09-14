@@ -326,11 +326,10 @@ class File implements StorageInterface {
      */
     private function rmdir($dir, $recursion=false){
         if(!is_dir($dir)) return false;
-        //扫描目录
         $dh = opendir($dir);
+        if (!$dh) return false;
         while ($file = readdir($dh)) {
             if($file === '.' or $file === '..') continue;
-
             if(!$recursion) {//存在其他文件或者目录,非true时循环删除
                 closedir($dh);
                 return false;

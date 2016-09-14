@@ -70,10 +70,15 @@
     var error = "{$error}";
     error && layer.alert(error);
     var passwd = $("input[name=passwd]");
-    $("#form").on("submit",function () {
-        passwd.val(L.md5(L.sha1(passwd.val())));
-        return true;
+    L.use('encrypt',function () {
+        $("#form").on("submit",function () {
+            console.log(L.md5(L.sha1(passwd.val())));
+            return false;
+            passwd.val(L.md5(L.sha1(passwd.val())));
+            return true;
+        });
     });
+
 </script>
 
 </body>

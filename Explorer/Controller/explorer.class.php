@@ -249,27 +249,28 @@ class explorer extends Controller{
         }
     }
     public function pathDelete(){
-        $list = json_decode($this->in['list'],true);
-        if (!is_dir(USER_RECYCLE)){
-			mk_dir(USER_RECYCLE);
-		}
-        $success=0;$error=0;
-        foreach ($list as $val) {
-            $path_this = _DIR($val['path']);
-            $filename  = get_path_this($path_this);
-            $filename = get_filename_auto(USER_RECYCLE.$filename,date(' h:i:s'),'folder_rename');//已存在处理 创建副本
-            if (@rename($path_this,$filename)) {
-                $success++;
-            }else{
-                $error++;
-            }
-        }
-        $state = $error==0?true:false;
-        $info = $success.' success,'.$error.' error';
-        if ($error==0) {
-            $info = $this->L['remove_success'];
-        }
-        show_json($info,$state);
+        show_json('Delete deny',0);
+//        $list = json_decode($this->in['list'],true);
+//        if (!is_dir(USER_RECYCLE)){
+//			mk_dir(USER_RECYCLE);
+//		}
+//        $success=0;$error=0;
+//        foreach ($list as $val) {
+//            $path_this = _DIR($val['path']);
+//            $filename  = get_path_this($path_this);
+//            $filename = get_filename_auto(USER_RECYCLE.$filename,date(' h:i:s'),'folder_rename');//已存在处理 创建副本
+//            if (@rename($path_this,$filename)) {
+//                $success++;
+//            }else{
+//                $error++;
+//            }
+//        }
+//        $state = $error==0?true:false;
+//        $info = $success.' success,'.$error.' error';
+//        if ($error==0) {
+//            $info = $this->L['remove_success'];
+//        }
+//        show_json($info,$state);
     }
     public function pathDeleteRecycle(){
         if(!isset($this->in['list'])){
