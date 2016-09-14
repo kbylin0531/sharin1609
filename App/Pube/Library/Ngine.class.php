@@ -6,8 +6,8 @@
  * Time: 4:20 PM
  */
 namespace Library;
-
 defined('PUBE_BASE_DIR') or define('PUBE_BASE_DIR',dirname(__DIR__).'/');
+defined('PUBE_LIB_DIR') or define('PUBE_LIB_DIR',PUBE_BASE_DIR.'/Library');
 defined('PUBE_DATA_DIR') or define('PUBE_DATA_DIR',PUBE_BASE_DIR.'Data/');
 defined('PUBE_COOKIE_DIR') or define('PUBE_COOKIE_DIR',PUBE_DATA_DIR.'Cookie/');
 defined('PUBE_SCRIPT_DIR') or define('PUBE_SCRIPT_DIR',dirname($_SERVER['SCRIPT_FILENAME']).'/');
@@ -30,8 +30,14 @@ spl_autoload_register(function ($clsnm){
 },true,true);
 
 abstract class Ngine {
-
+    /**
+     * @var array 继承类的示例列表，依据类名划分
+     */
     private static $instances = [];
+
+    /**
+     * @return Ngine 获取本类的一个实例
+     */
     public static function getInstance(){
         $clsnm = static::class;
         if(!isset(self::$instances[$clsnm])){
@@ -42,11 +48,12 @@ abstract class Ngine {
 
     /**
      * 检查文件如果文件不存在则创建一个空的文件，并且解决上层目录的问题
-     * @param $cookie
-     * @throws \Exception
+     * @param string $file 文件路径
+     * @return bool
+     * @throws \Exception 无权限时抛出异常
      */
-    public static function touch($cookie){
-        $dir = dirname($cookie);
+    public static function touch($file){
+        $dir = dirname($file);
         if(!is_dir($dir)){
             if(!mkdir($dir,0777,true)){
                 throw new \Exception('创建cookie存放目录失败');
@@ -57,9 +64,18 @@ abstract class Ngine {
                 throw new \Exception('为cookie存放目录添加写权限失败');
             }
         }
-        touch($cookie);
+        return touch($file);
     }
 
+    /**
+     * 执行一个get请求
+     * @deprecated
+     * @param string $url 请求地址
+     * @param string $inputcookie 输入cookie
+     * @param string $outputcookie 主要cookie
+     * @param bool $withhead 是否返回头部，默认否
+     * @return string 返回远程输出，请求失败时返回空串
+     */
     public static function get($url,$inputcookie,$outputcookie,$withhead=false){
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, $withhead); //将头文件的信息作为数据流输出
@@ -82,6 +98,17 @@ abstract class Ngine {
         return false === $content ? '': (string)$content;
     }
 
+    /**
+     * 执行一个post请求
+     * @deprecated
+     * @param $url
+     * @param $fields
+     * @param $inputcookie
+     * @param $outputcookie
+     * @param bool $withhead
+     * @param array $other
+     * @return string
+     */
     public static function post($url,$fields,$inputcookie,$outputcookie,$withhead=false,array $other=[]){
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, $withhead); //将头文件的信息作为数据流输出

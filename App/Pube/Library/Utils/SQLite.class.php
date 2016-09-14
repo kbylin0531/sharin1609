@@ -14,10 +14,21 @@ namespace Library\Utils;
  * @package Library\Utils
  */
 abstract class SQLite extends \PDO{
-
+    /**
+     * @var string 表名词
+     */
     protected $tablename = '';
-
+    /**
+     * @var string 主健名
+     */
     protected $pk = '';
+    /**
+     * @var array 惯例配置
+     */
+    protected static $config = [
+        'dsn'  => 'sqlite.sample.db',
+    ];
+
     /**
      * @var SQLite[]
      */
@@ -30,7 +41,11 @@ abstract class SQLite extends \PDO{
     public static function getInstance($dsn=''){
         $clsnm = static::class;
         if(!isset(self::$instances[$clsnm])){
-            $dsn or $dsn = 'sqlite:'.dirname(__FILE__).'/sqlite3.db';
+            if(!$dsn){
+                $conf = include PUBE_LIB_DIR.'/Config/sqlite.php';//加在外部数据库配置
+                self::$config = array_merge(self::$config,$conf);
+                $dsn = self::$config['dsn'];
+            }
             self::$instances[$clsnm] = new $clsnm($dsn);
         }
         return self::$instances[$clsnm];

@@ -7,4 +7,4 @@
  * Time: 9:39 AM
  */
 chdir(dirname(__DIR__).'/Vendor/adminer/');
-include dirname(__DIR__).'/Vendor/adminer/index.php';
+include 'index.php';
