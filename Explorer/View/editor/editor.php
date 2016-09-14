@@ -1,19 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $L['ui_editor'].' - '.$L['kod_name'].$L['kod_power_by'];?></title>
-	<link rel="Shortcut Icon" href="<?php echo STATIC_PATH;?>images/favicon.ico">
-	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/><link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
-	<!--[if IE 7]>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome-ie7.css">
-	<![endif]-->
-	
-	
-	<link href="<?php echo STATIC_PATH;?>style/skin/<?php echo $config['user']['theme'];?>app_editor.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet" id='link_css_list'/>
-	
-</head>
+<?php include_once TEMPLATE.'common/head.php'; ?>
+<link href="./static/style/skin/<?php echo $config['user']['theme'];?>app_editor.css" rel="stylesheet" id='link_css_list'/>
+
 
 <?php if(isset($_GET['project'])){?>
 <style>.topbar{display: none;}.frame-header{top:0;}.frame-main{top:0px;}</style>
@@ -47,7 +34,7 @@
 		</div><!-- / frame-right end-->
 	</div><!-- / frame-main end-->
 <?php include(TEMPLATE.'common/footer.html');?>
-<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js?ver=<?php echo KOD_VERSION;?>"></script>
+<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js"></script>
 <script src="./<?php echo ENTRY_FILE; ?>?user/common_js#id=<?php echo rand_string(8);?>"></script>
 <script type="text/javascript">
 	G.project = "<?php echo (isset($_GET['project'])?$_GET['project']:'') ;?>";

@@ -105,6 +105,31 @@ class Storage extends Core {
         }
     }
 
+
+    /**
+     * 文件大小格式化
+     * @param int $precision
+     * @param int $bytes 文件大小
+     * @param int $precision 保留小数点
+     * @return string
+     */
+    public static function formatSize($bytes, $precision = 2){
+        if($bytes != 0){
+            $unit = [
+                'TB' => 1099511627776,  // pow( 1024, 4)
+                'GB' => 1073741824,		// pow( 1024, 3)
+                'MB' => 1048576,		// pow( 1024, 2)
+                'kB' => 1024,			// pow( 1024, 1)
+                'B ' => 1,				// pow( 1024, 0)
+            ];
+            foreach ($unit as $un => $mag) {
+                if (doubleval($bytes) >= $mag)//floatval === doubleval
+                    return round($bytes / $mag, $precision).' '.$un;
+            }
+        }
+        return "0 B";
+    }
+
     /**
      * 参数一是否是文件
      * @static

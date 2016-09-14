@@ -8,7 +8,11 @@
 
 namespace Library\Utils;
 
-
+/**
+ * Class SQLite
+ * 数据库访问抽象对象
+ * @package Library\Utils
+ */
 abstract class SQLite extends \PDO{
 
     protected $tablename = '';

@@ -35,7 +35,7 @@ var FrameCall = (function(){
 			var fun=action+'('+value+');';//拼装执行语句，字符串转换到代码
 			try{
 				eval(fun);
-			} catch(e) {};
+			} catch(e) {}
 		},
 		//该窗口调用顶层窗口的子窗口api,调用iframe框架的js函数.封装控制器。
 		top:function(iframe,action,value){
@@ -849,7 +849,7 @@ var Base64 =  (function(){
             _keyStr.charAt(enc3) + _keyStr.charAt(enc4);  
         }  
         return output;  
-    }  
+    }  ;
     // public method for decoding  
     var decode = function (input) {  
         var output = "";  

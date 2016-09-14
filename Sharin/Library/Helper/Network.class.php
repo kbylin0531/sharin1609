@@ -8,6 +8,7 @@
  */
 
 namespace Sharin\Library\Helper;
+use Sharin\Core\Storage;
 
 
 /**
@@ -146,28 +147,29 @@ class Network {
      * @return false|string
      */
     public static function download($url, $file='', $timeout=60) {
-        if($file){
-            $basename = pathinfo($file,PATHINFO_BASENAME);
-            $dir = realpath(dirname($file));
-        }else{
-            $basename = md5($url.SR_REQUEST_MICROTIME);//应对变化的事件
-            $dir = SR_PATH_PUBLIC.'/download';
-        }
+        set_time_limit($timeout);
+        $file or $file = pathinfo($url,PATHINFO_BASENAME);
+        $dir = realpath(dirname($file));
         if(!is_dir($dir) or !is_writeable($dir)){
             Storage::mkdir($dir,0766);
         }
-        $file = "{$dir}/{$basename}";
 
-        $context = stream_context_create([
-            'http'=>[
-                'method'    =>  'GET',
-                'header'    =>  "",
-                'timeout'   =>  $timeout
-            ],
-        ]);
-        if(@copy($url, $file, $context)) {
-            return $file;
-        } else {
+        if ($fp = @fopen ($url, "rb")){
+            if(!$download_fp = @fopen($file, "wb")){
+                return false;
+            }
+            while(!feof($fp)){
+                if(!file_exists($file)){//删除目标文件；则终止下载
+                    fclose($download_fp);
+                    return false;
+                }
+                fwrite($download_fp, fread($fp, 1024 * 8 ), 1024 * 8);
+            }
+            //下载完成，重命名临时文件到目标文件
+            fclose($download_fp);
+            fclose($fp);
+            return true;
+        }else{
             return false;
         }
     }

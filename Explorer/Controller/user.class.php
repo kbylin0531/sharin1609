@@ -9,7 +9,7 @@
 class user extends Controller
 {
     private $user;  //用户相关信息
-    private $auth;  //用户所属组权限
+//    private $auth;  //用户所属组权限
     private $notCheck;
     function __construct(){
         parent::__construct();
@@ -55,8 +55,7 @@ class user extends Controller
             if($this->config['user']['theme']==''){
                 $this->config['user'] = $this->config['setting_default'];
             }
-            return;
-        }else if($_COOKIE['kod_name']!='' && $_COOKIE['kod_token']!=''){
+        }else if(!empty($_COOKIE['kod_name']) and $_COOKIE['kod_token']!=''){
             $member = new fileCache(USER_SYSTEM.'member.php');
             $user = $member->get($_COOKIE['kod_name']);
             if (!is_array($user) || !isset($user['password'])) {
@@ -66,7 +65,7 @@ class user extends Controller
                 session_start();//re start
                 $_SESSION['kod_login'] = true;
                 $_SESSION['kod_user']= $user;
-                setcookie('kod_name', $_COOKIE['kod_name'], time()+3600*24*365); 
+                setcookie('kod_name', $_COOKIE['kod_name'], time()+3600*24*365);
                 setcookie('kod_token',$_COOKIE['kod_token'],time()+3600*24*365); //密码的MD5值再次md5
                 header('location:'.get_url());
                 exit;
@@ -82,6 +81,7 @@ class user extends Controller
                 header('location:./'.ENTRY_FILE.'?user/loginSubmit&name=guest&password=guest');
             }
         }
+        return false;
     }
 
     //临时文件访问
@@ -132,11 +132,14 @@ class user extends Controller
         $js .= 'AUTH='.json_encode($GLOBALS['auth']).';';
         $js .= 'G='.json_encode($the_config).';';
         header("Content-Type:application/javascript");
+        \Sharin\Developer::closeTrace();
         echo $js;
     }
 
     /**
      * 登录view
+     * @param string $msg
+     * @return void
      */
     public function login($msg = ''){
         if (!file_exists(USER_SYSTEM.'install.lock')) {
@@ -179,9 +182,7 @@ class user extends Controller
             $password = rawurldecode($this->in['password']);
             
             session_start();//re start 有新的修改后调用
-            if(need_check_code() && isset($_SESSION['code_error_time'])  && 
-               intval($_SESSION['code_error_time']) >=3 && 
-               $_SESSION['check_code'] !== strtolower($this->in['check_code'])){
+            if(need_check_code() && isset($_SESSION['code_error_time'])  &&  intval($_SESSION['code_error_time']) >=3 &&  $_SESSION['check_code'] !== strtolower($this->in['check_code'])){
                 // pr($_SESSION['check_code'].'--'.strtolower($this->in['check_code']));exit;
                 $this->login($this->L['code_error']);
             }
@@ -205,6 +206,8 @@ class user extends Controller
             }else{
                 $msg = $this->L['password_error'];
             }
+            //验证码输入次数上限
+            isset($_SESSION['code_error_time']) or $_SESSION['code_error_time'] = 0;
             $_SESSION['code_error_time'] = intval($_SESSION['code_error_time']) + 1;
         }
         $this->login($msg);
@@ -218,7 +221,7 @@ class user extends Controller
         $password_new=$this->in['password_new'];
         if (!$password_now && !$password_new)show_json($this->L['password_not_null'],false);
         if ($this->user['password']==md5($password_now)){
-            $member_file = USER_SYSTEM.'member.php';
+//            $member_file = USER_SYSTEM.'member.php';
             $sql=new fileCache(USER_SYSTEM.'member.php');
             $this->user['password'] = md5($password_new);
             $sql->update($this->user['name'],$this->user);

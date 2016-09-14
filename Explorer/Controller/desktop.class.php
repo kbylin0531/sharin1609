@@ -7,10 +7,12 @@
 */
 
 class desktop extends Controller{
+
     function __construct() {
         parent::__construct();
         $this->tpl = TEMPLATE.'desktop/';	
     }
+
     public function index() {
         $wall = $this->config['user']['wall'];
         if(strlen($wall)>3){

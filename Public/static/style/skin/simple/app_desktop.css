@@ -503,7 +503,7 @@ div.desktop .fileList_icon .file.select .titleBox { background: rgba(0,0,0,0.1);
 .context-menu-list .context-menu-item .context-menu-accesskey { text-decoration: underline;}
 .desktop { position: absolute; -khtml-user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none; background-color: #222; overflow: hidden; right: 0px; bottom: 0px; top: 0px; left: 0px; -webkit-transition: background 0.3s; -moz-transition: background 0.3s; -o-transition: background 0.3s; -ms-transition: background 0.3s; transition: background 0.3s; -moz-background-size: 100% 100%; -o-background-size: 100% 100%; -webkit-background-size: 100% 100%; background-size: 100% 100%; -ms-background-size: 100% 100%;}
 .desktop .wallbackground { position: absolute; width: 100%; height: 100%; top: 0px; right: 0px; bottom: 0px; left: 0px;}
-.desktop .fileList_icon { position: absolute; width: 100%; bottom: 10px; top: 40px; overflow: hidden;}
+.desktop .fileList_icon { position: absolute; width: 100%; bottom: 10px; top: 5px; overflow: hidden;}
 .desktop .fileList_icon .file { float: none; color: #fff; border: none; display: inline-block; writing-mode: lr-tb; text-shadow: 0 0 2px #000;}
 .desktop .fileList_icon .file.hover { background: #000 \9; background: rgba(0,0,0,0.1); border: none; background-color: #aaa\9;}
 .desktop .fileList_icon .file.select,.desktop .fileList_icon .file.selectDragTemp { background: #000 \9; background: rgba(0,0,0,0.35); background-color: #eee\9; color: #444\9; border: none;}

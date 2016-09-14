@@ -20,20 +20,16 @@ define('PUBE_PUBLIC_URL',PUBE_HTTP_PREFIX.$_SERVER['SERVER_NAME'].((80 == $_SERV
 define('PUBE_SCRIPT_URL',PUBE_PUBLIC_URL.'/index.php');
 
 define('NOW',$_SERVER['REQUEST_TIME']);
+spl_autoload_register(function ($clsnm){
+    static $_map = [];
+    if(false !== strpos(ltrim($clsnm,'\\'),'Library\\')){
+        //类名称以Library开头的都认为可能属于该类库
+        $path = PUBE_BASE_DIR.str_replace('\\', '/', $clsnm).'.class.php';
+        if(is_readable($path)) include_once $_map[$clsnm] = $path;
+    }
+},true,true);
 
 abstract class Ngine {
-
-    public static function init(){
-        spl_autoload_register(function ($clsnm){
-            static $_map = [];
-            if(false !== strpos(ltrim($clsnm,'\\'),'Library\\')){
-                //类名称以Library开头的都认为可能属于该类库
-                $path = PUBE_BASE_DIR.str_replace('\\', '/', $clsnm).'.class.php';
-                if(is_readable($path)) include_once $_map[$clsnm] = $path;
-            }
-        },true,true);
-    }
-
 
     private static $instances = [];
     public static function getInstance(){

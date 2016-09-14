@@ -16,7 +16,7 @@ class app extends Controller{
      * 用户首页展示
      */
     public function index() {
-        $this->display(TEMPLATE.'app/'.ENTRY_FILE);
+        $this->display(TEMPLATE.'app/index.php');
     }
 
     public function init_app($user_info){
@@ -25,7 +25,7 @@ class app extends Controller{
         $default = explode(',',$new_user_app);
         $info = array();
         foreach ($default as $key) {
-            $info[$key] = $list[$key];
+            isset($list[$key]) and $info[$key] = $list[$key];
         }
         $desktop = USER_PATH.$user_info['name'].'/home/desktop/';
         mk_dir($desktop);

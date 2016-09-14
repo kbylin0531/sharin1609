@@ -72,7 +72,7 @@
         ?>
         <tr class="menu_list <?php echo $the_type.$the_use.$the_null;?>">
             <td class="name"><input type="text" name="name" value="<?php echo htmlspecialchars(urldecode($menu['name']));?>"/>
-                <span><?php echo $L['ui_'.$menu['name']];?></span>
+                <span><?php  $key='ui_'.$menu['name']; echo isset($L[$key])?$L[$key]:'Untitled';?></span>
             </td>
             <td class="url">
                 <input type="text" name="url" value="<?php echo htmlspecialchars(urldecode($menu['url']));?>">

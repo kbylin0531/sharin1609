@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 	<title><?php echo $L['ui_explorer'].' - '.$L['kod_name'].$L['kod_power_by'];?></title>
 	<link rel="Shortcut Icon" href="<?php echo STATIC_PATH;?>images/favicon.ico">
-	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>
+	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
 	<link rel="stylesheet" href="<?php echo STATIC_PATH;?>style/wap/app_explorer.css"/>
 </head>
@@ -59,7 +59,7 @@
 	</div><!-- / frame-main end-->
 
 
-<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js?ver=<?php echo KOD_VERSION;?>"></script>
+<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js"></script>
 <script src="./<?php echo ENTRY_FILE; ?>?user/common_js&type=explorer&id=<?php echo rand_string(8);?>"></script>
 <script type="text/javascript">
 	G.this_path = "<?php echo $dir;?>";

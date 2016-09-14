@@ -663,7 +663,8 @@ class explorer extends Controller{
         $fid = Mcrypt::encode($file_path,$pass,$GLOBALS['config']['settings']['download_url_time']);
         //文件对外界公开的地址;有效期在user_setting.php中设定；末尾追加文件名为了kod远程下载
         $file_name = urlencode(get_path_this($file_path));
-        return APPHOST.ENTRY_FILE.'?user/public_link&fid='.$fid.'&file_name=/'.$file_name;
+//        return $file_path.'#########'.$file_name;
+        return SR_PUBLIC_URL.'/'.ENTRY_FILE.'?user/public_link&fid='.$fid.'&file_name=/'.$file_name;
     }
 
     //生成临时文件key

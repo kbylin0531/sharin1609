@@ -1,18 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"  menu="menubody">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title><?php echo $L['kod_name'].$L['kod_power_by'];?></title>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
-	<!--[if IE 7]>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome-ie7.css">
-	<![endif]-->
-	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>	  
-	
-	<link href="<?php echo STATIC_PATH;?>style/skin/<?php echo $config['user']['theme'];?>app_setting.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet" id='link_css_list'/>
-	
-</head>
+<?php include_once TEMPLATE.'common/head.php'; ?>
+<link href="./static/style/skin/<?php echo $config['user']['theme'];?>app_setting.css" rel="stylesheet" id='link_css_list'/>
 <body>
 	<div id="body">
 		<div class="menu_left">	

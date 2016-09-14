@@ -30,9 +30,9 @@
 	            $error = php_env_check();
 	            if ($error=='') {
 	            	echo '<div class="success"><h4>Successful!</h4>',$L['install_login'],
-	            	'<br/>'.$L['install_user_default'].'</div></div><div class="guest"><a href="./<?php echo ENTRY_FILE; ?>?user/loginFirst">'.$L['login'].'</a></div>';
+	            	'<br/>'.$L['install_user_default'].'</div></div><div class="guest"><a href="./'.ENTRY_FILE.'?user/loginFirst">'.$L['login'].'</a></div>';
 	            }else{
-	            	echo '<div class="error"><h4>error:</h4>'.$error.'</div></div><div class="guest"><a href="./<?php echo ENTRY_FILE; ?>?user/loginFirst">'.$L['php_env_error_ignore'].'</a></div>';
+	            	echo '<div class="error"><h4>error:</h4>'.$error.'</div></div><div class="guest"><a href="./'.ENTRY_FILE.'?user/loginFirst">'.$L['php_env_error_ignore'].'</a></div>';
 	            }
 	        ?>
 		</div>

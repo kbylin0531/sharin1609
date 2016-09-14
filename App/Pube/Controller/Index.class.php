@@ -9,9 +9,18 @@ use Sharin\Core\Controller;
 use Sharin\Core\Response;
 
 include_once dirname(__DIR__).'/Library/Ngine.class.php';
-Ngine::init();
 
 class Index extends Controller{
+
+    public function index(){
+        echo <<< endline
+        <ul>
+            <li><a href="member" target="_blank">member</a></li>
+            <li><a href="product" target="_blank">product</a></li>
+            <li><a href="published" target="_blank">published</a></li>
+        </ul>
+endline;
+    }
 
     public function member($code='',$email='',$action=''){
         if($action === 'capture'){
@@ -124,7 +133,7 @@ class Index extends Controller{
         $this->display();
     }
 
-    public function result(){
+    public function published(){
         $product = ProductModel::getInstance();
         $this->assign('data',json_encode($product->select()));
         $this->display();

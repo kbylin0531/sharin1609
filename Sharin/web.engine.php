@@ -924,7 +924,7 @@ namespace Sharin {
              ************************************/
         ];
         /**
-         * @var array
+         * @var array 当前类使用的默认驱动的角标
          */
         protected static $_current_using = [];
 

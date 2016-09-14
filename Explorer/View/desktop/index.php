@@ -1,22 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="renderer" content="webkit">
-	<title><?php echo $L['ui_desktop'].' - '.$L['kod_name'].$L['kod_power_by'];?></title>
-	<link rel="Shortcut Icon" href="<?php echo STATIC_PATH;?>images/favicon.ico">
-	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
-	<!--[if IE 7]>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome-ie7.css">
-	<![endif]-->
-	<link href="<?php echo STATIC_PATH;?>js/lib/picasa/style/style.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>
-	
-	<link href="<?php echo STATIC_PATH;?>style/skin/<?php echo $config['user']['theme'];?>app_desktop.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet" id='link_css_list'/>
-	
-</head>
+<?php
+include_once TEMPLATE.'common/head.php';
+?>
 <body style="overflow: hidden;" oncontextmenu="return core.contextmenu();">
-	<?php include(TEMPLATE.'common/navbar.html');?>
+	<?php /*include(TEMPLATE.'common/navbar.html');*/?>
 	<div class='bodymain html5_drag_upload_box desktop' style="background-image: url('<?php echo $wall;?>');">
 		<img class="wallbackground" src="<?php echo $wall;?>"/>
 		<div class="fileContiner fileList_icon hidden">
@@ -72,7 +58,7 @@
 			<li><a href="./<?php echo ENTRY_FILE; ?>?user/logout" style="margin-top:70px;"><span><?php echo $L['ui_logout'];?>></span></a></li>
 		</ul>
 	</div>
-<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js?ver=<?php echo KOD_VERSION;?>"></script>
+<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js"></script>
 <script src="./<?php echo ENTRY_FILE; ?>?user/common_js&type=desktop&id=<?php echo rand_string(8);?>"></script>
 <script type="text/javascript">
 	G.this_path = "<?php echo MYHOME.'desktop/';?>";

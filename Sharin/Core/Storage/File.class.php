@@ -205,10 +205,26 @@ class File implements StorageInterface {
      * @param string $path 文件路径
      * @param int $auth 文件权限
      * @return bool 是否成功修改了该文件|返回null表示在访问的范围之外
+     * @param bool $_check  内部标记
+     * @return bool
      */
-    public function chmod($path, $auth = 0766){
-        if(!$this->checkWritableWithRevise($path)) return null;
-        return file_exists($path)?chmod($path,$auth):false;
+    public function chmod($path, $auth = 0766,$_check=true){
+        if($_check and (!$this->checkWritableWithRevise($path) or !file_exists($path))) return false;
+
+        if (is_file($path)){
+            return @chmod($path,$auth);
+        }else{
+            if (!$dh = opendir($path)) return false;
+            while (($file = readdir($dh)) !== false){
+                if ($file != '.' && $file != '..') {
+                    $fullpath = $path . DIRECTORY_SEPARATOR . $file;
+                    @chmod($fullpath,$auth);
+                    return $this->chmod($fullpath,$auth,false);
+                }
+            }
+            closedir($dh);
+            return @chmod($path,$auth);
+        }
     }
 
     /**

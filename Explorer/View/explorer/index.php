@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" scroll="no">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="renderer" content="webkit">
-	<title><?php echo $L['ui_explorer'].' - '.$L['kod_name'].$L['kod_power_by'];?></title>
-	<link rel="Shortcut Icon" href="<?php echo STATIC_PATH;?>images/favicon.ico">
-	<link href="<?php echo STATIC_PATH;?>js/lib/picasa/style/style.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>
-	<link href="<?php echo STATIC_PATH;?>style/bootstrap.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet"/>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome.css">
-	<!--[if IE 7]>
-	<link rel="stylesheet" href="./static/style/font-awesome/css/font-awesome-ie7.css">
-	<![endif]-->
-
-	
-	<link href="<?php echo STATIC_PATH;?>style/skin/<?php echo $config['user']['theme'];?>app_explorer.css?ver=<?php echo KOD_VERSION;?>" rel="stylesheet" id='link_css_list'/>
-	
-</head>
+<?php
+include_once TEMPLATE.'common/head.php';
+?>
+<link href="./static/js/lib/picasa/style/style.css" rel="stylesheet"/>
+<link href="./static/style/skin/<?php echo $config['user']['theme'];?>app_explorer.css" rel="stylesheet" id='link_css_list'/>
 
 <?php if(isset($_GET['type'])){?>
 <style>.topbar{display: none;}.frame-header{top:0;}.frame-main{top:50px;}</style>
@@ -163,7 +150,7 @@
 		</div><!-- / frame-right end-->
 	</div><!-- / frame-main end-->
 <?php include(TEMPLATE.'common/footer.html');?>
-<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js?ver=<?php echo KOD_VERSION;?>"></script>
+<script src="<?php echo STATIC_PATH;?>js/lib/seajs/sea.js"></script>
 <script src="./<?php echo ENTRY_FILE; ?>?user/common_js&type=explorer&id=<?php echo rand_string(8);?>"></script>
 <script type="text/javascript">
 	G.this_path = "<?php echo $dir;?>";
