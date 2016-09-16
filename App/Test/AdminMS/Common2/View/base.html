@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {* logo *}
+    <link rel="shortcut icon" href="{$smarty.const.URL_PUBLIC_PATH}/favicon.ico">
+
+    {* 加载忙，可以注释 *}
+    {*
+        <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic,700,800' rel='stylesheet' type='text/css'>-->
+        <!--<link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>-->
+        <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>-->
+    *}
+    {* 代替使用国内的字体库  网址：http://libs.useso.com/ *}
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600&subset=latin,latin-ext' rel='stylesheet'>
+    <link href='http://fonts.useso.com/css?family=Open+Sans:300,400,600&subset=latin,latin-ext' rel='stylesheet'>
+
+    <!-- Bootstrap core CSS -->
+    {* bs核心样式 *}
+    <link href="{$smarty.const.URL_PUBLIC_PATH}/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/libs/font-awesome/css/font-awesome.min.css">
+    {* 自定义滚动条 样式 *}
+    <link rel="stylesheet" type="text/css" href="{$smarty.const.URL_PUBLIC_PATH}/libs/nanoScrollerJS/bin/css/nanoscroller.css"/>
+    {* bootstrap3 样式字体 *}
+
+    {*
+        HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
+        使用Javascript来使不支持HTML5的浏览器支持HTML标签
+    *}
+    <!--[if lt IE 9]>
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <title>{block name='title'}Corax Admin{/block}</title>
+
+    <!-- Custom styles for this template -->
+    <link href="{$smarty.const.URL_PUBLIC_PATH}/css/corax.css" rel="stylesheet"/>
+    {block name='css'}{/block}
+
+</head>
+<body>
+    {* 顶部导航栏 *}
+    <div id="head-nav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            {* 顶部导航栏标题 *}
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon icon-gear"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    {block name='nav_title'} Corax Admin {/block}
+                </a>
+            </div>
+
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    {* 遍历菜单配置项 *}
+                    {foreach $topbar_menuconf['menus'] as $item}
+                    {if empty($item['menus'])}
+                    {* 输出激活与否的li前部 （简单的直接菜单） *}
+                    {if $topbar_active_index === $item['index']}
+                    <li class="active">
+                        {else}
+                    <li>
+                        {/if}
+                        <a href="{$item['url']}">{$item['name']}</a></li>
+                    {else}
+                    {* 输出激活与否的li前部 （复合菜单）*}
+                    {if $topbar_active_index === $item['index']}
+                    <li class="dropdown active">
+                        {else}
+                    <li class="dropdown">
+                        {/if}
+                        {* 检查菜单类型 *}
+                        {if intval($item['type']) === 1}
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$item['name']}<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            {* 遍历子菜单 *}
+                            {foreach $item['menus'] as $subitem}
+                            {if empty($subitem['menus'])}
+                            {* 直接子菜单项 *}
+                            <li><a href="{$subitem['url']}">{$subitem['name']}</a></li>
+                            {else}
+                            {* 遍历二级子菜单 *}
+                            <li class="dropdown-submenu"><a href="#">{$subitem['name']}</a>
+                                <ul class="dropdown-menu">
+                                    {foreach $subitem['menus'] as $subsubitem}
+                                    <li><a href="{$subsubitem['url']}">{$subsubitem['name']}</a></li>
+                                    {/foreach}
+                                </ul>
+                            </li>
+                            {/if}
+                            {/foreach}
+                        </ul>
+                        {elseif intval($item['type']) === 2}
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$item['name']}<b class="caret"></b></a>
+                        <ul class="dropdown-menu col-menu-2">
+                            {foreach $item['menus'] as $subitem}
+                            <li class="col-sm-6 no-padding">
+                                <ul>
+                                    {foreach $subitem as $subsubitem}
+                                    {if isset($subsubitem['icon'])}
+                                    <li class="dropdown-header"><i class="icon {$subsubitem['icon']}"></i>{$subsubitem['name']}
+                                    </li>
+                                    {else}
+                                    <li><a href="{$subsubitem['url']}">{$subsubitem['name']}</a></li>
+                                    {/if}
+                                    {/foreach}
+                                </ul>
+                            </li>
+                            {/foreach}
+                        </ul>
+                        {else}
+                        {* 其他类型，不输出 *}
+                        {/if}
+                    </li>
+                    {/if}
+                    {/foreach}
+                </ul>
+                <ul class="nav navbar-nav navbar-right user-nav">
+                    <li class="dropdown profile_menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img alt="Avatar" src="{$user_info['avatar']}"/>
+                            <span>{$user_info['nickname']}</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {foreach $user_info['user_menu'] as $index=>$cluster}
+                            {foreach $cluster as $name=>$url}
+                            <li><a href="{$url}">{$name}</a></li>
+                            {/foreach}
+                            {* 如果是最后一个元素则不输出分割 *}
+                            {if $index !== count($user_info['user_menu'])-1}
+                            <li class="divider"></li>
+                            {/if}
+                            {/foreach}
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right not-nav">
+                    <li class="button dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon icon-comments"></i><span class="bubble">2</span></a>
+                        <ul class="dropdown-menu messages">
+                            <li>
+                                <div class="nano nscroller">
+                                    <div class="content">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <img src="{$smarty.const.URL_PUBLIC_PATH}/images/avatar2.jpg" alt="avatar"/>
+                                                    <span class="date pull-right">13 Sept.</span> <span
+                                                        class="name">Daniel</span> I'm following you, and I want your money!
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <ul class="foot">
+                                    <li><a href="#">View all messages </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="button dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon icon-globe"></i><span class="bubble">2</span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="nano nscroller">
+                                    <div class="content">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="icon icon-cloud-upload info"></i><b>Daniel</b> is now following you
+                                                <span class="date">2 minutes ago.</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <ul class="foot">
+                                    <li><a href="#">View all activity </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="cl-wrapper" class="fixed-menu">
+        {* 侧边栏区域 *}
+        <div class="cl-sidebar" data-position="right" data-step="1" data-intro="<strong>Fixed Sidebar</strong> <br/> It adjust to your needs." >
+            <div class="cl-navblock">
+                <div class="menu-space">
+                    <div class="content">
+                        <div class="side-user">
+                            <div class="avatar"><img src="{$user_info['avatar']}" alt="Avatar" /></div>
+                            <div class="info">
+                                <a href="#">{$user_info['nickname']}</a>
+                                <img src="{$smarty.const.URL_PUBLIC_PATH}/images/state_online.png" alt="Status" /> <span>Online</span>
+                            </div>
+                        </div>
+                        {* 侧边栏菜单项 *}
+                        <ul class="cl-vnavigation">
+                            {foreach $sidebar_config['menus'] as $item}
+                                <li><a href="javascript:void(0);"><i class="icon {$item['icon']}"></i><span>{$item['name']}</span></a>
+                                    <ul class="sub-menu">
+                                        {foreach $item['submenus'] as $subitem}
+                                            {if intval($sidebar_active_index) === intval($subitem['index'])} <li class="active"> {else} <li> {/if}
+                                            <a href="{$subitem['url']}">
+                                            {if false === empty($subitem['meta'])} <span class="label label-primary pull-right">{$subitem['meta']}</span> {/if}
+                                            {$subitem['name']}
+                                            </a></li>
+                                        {/foreach}
+                                    </ul>
+                                </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-right collapse-button" style="padding:7px 9px;">
+                    <input type="text" class="form-control search" placeholder="Search..." />
+                    <button id="sidebar-collapse" class="btn btn-default" style=""><i style="color:#fff;" class="icon icon-angle-left"></i></button>
+                </div>
+            </div>
+        </div>
+
+        {* 舞台区域 *}
+        {block name='stage'}{/block}
+    </div>
+    {* jquery-1.8.2 *}
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/js/jquery-1.8.2.min.js"></script>
+    {* 自定义滚动条 js *}
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/js/corax.js"></script>
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/libs/nanoScrollerJS/bin/javascripts/jquery.nanoscroller.js"></script>
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/libs/bootstrap/js/bootstrap.min.js"></script>
+    {block name='js'}{/block}
+
+    {* 运行 *}
+    <script>
+        $(document).ready(function () {
+            Corax.start();
+        });
+    </script>
+</body>
+</html>

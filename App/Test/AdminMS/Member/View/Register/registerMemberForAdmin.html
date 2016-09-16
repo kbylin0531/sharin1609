@@ -1,0 +1,139 @@
+{extends file="../../../Common/View/base.html"}
+
+{block name="import"}
+<link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/matadmin/css/uniform.css" />
+<link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/matadmin/css/select2.css" />
+<link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/matadmin/css/matrix-style.css" />
+<link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/matadmin/css/matrix-media.css" />
+<link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/matadmin/css/bootstrap-wysihtml5.css" />
+
+<script src="{$smarty.const.URL_PUBLIC_PATH}/matadmin/js/masked.js"></script>
+<script src="{$smarty.const.URL_PUBLIC_PATH}/matadmin/js/jquery.uniform.js"></script>
+
+<link href="{$smarty.const.URL_PUBLIC_PATH}/css/modules/admin/member/register.css" rel="stylesheet" />
+<script src="{$smarty.const.URL_PUBLIC_PATH}/js/modules/admin/member/register.js"></script>
+
+<link  href="{$smarty.const.URL_PUBLIC_PATH}/plugin/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" />
+<script src="{$smarty.const.URL_PUBLIC_PATH}/plugin/datetimepicker/js/bootstrap-datetimepicker.js" type="text/javascript"  charset="UTF-8"></script>
+<script src="{$smarty.const.URL_PUBLIC_PATH}/plugin/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"  charset="UTF-8"></script>
+
+{/block}
+
+{block name="content"}
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="index.html" title="Go to Home" class="tip-bottom">
+                <i class="icon-home"></i>
+                Home
+            </a>
+            <a href="#" class="tip-bottom">Form elements</a>
+            <a href="#" class="current">Common elements</a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>基本信息</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form action="#" method="get" class="form-horizontal">
+
+                            <div class="control-group">
+                                <label class="control-label">用户名</label>
+                                <div class="controls">
+                                    <input type="text" name="username" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">昵称</label>
+                                <div class="controls">
+                                    <input type="text" name="nickname" class="span11" value="{$dft_nickname}" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">密码</label>
+                                <div class="controls">
+                                    <input type="password" name="password" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">确认密码</label>
+                                <div class="controls">
+                                    <input type="password" name="password_repeat" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>其他</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form action="{U url='admin/member/register/createMember'}" id="member_form" method="post" class="form-horizontal">
+                            <div class="control-group">
+                                <label class="control-label">手机</label>
+                                <div class="controls">
+                                    <input type="text" id="mobile" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">QQ</label>
+                                <div class="controls">
+                                    <input type="text" id="qq" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Email</label>
+                                <div class="controls">
+                                    <input type="text" id="email" class="span11" placeholder=""/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="sex">性别</label>
+                                <div class="controls">
+                                    <select name="sex" id="sex">
+                                        <option value="0">男</option>
+                                        <option value="1">女</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="status">启用状态</label>
+                                <div class="controls">
+                                    <select name="sex" id="status">
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">生日</label>
+                                <div class="controls" data-date="" data-date-format="yyyy-MM-dd"
+                                      data-link-format="yyyy-mm-dd">
+                                    <input size="16"  id="birthday" type="text" name="birthday" value="" placeholder="1990-01-01" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="submit" class="btn btn-success">Save</button>
+    </div>
+
+</div>
+
+{/block}

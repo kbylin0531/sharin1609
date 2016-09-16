@@ -1,0 +1,81 @@
+{extends file="base.html"}
+
+{block name="header"}
+    <li class="active"><a href="javascript:void(0);">安装协议</a></li>
+    <li class="active"><a href="javascript:void(0);">环境检测</a></li>
+    <li><a href="javascript:void(0);">创建数据库</a></li>
+    <li><a href="javascript:void(0);">安装</a></li>
+    <li><a href="javascript:void(0);">完成</a></li>
+{/block}
+
+{block name="body"}
+    <h1>环境检测</h1>
+    <table class="table">
+        <caption><h2>运行环境</h2></caption>
+        <thead>
+        <tr>
+            <th>项目</th>
+            <th>所需配置</th>
+            <th>当前配置</th>
+        </tr>
+        </thead>
+        <tbody>
+        {* 环境检测 *}
+        {foreach $env as $item}
+            <tr>
+                <td>{$item[0]}</td>
+                <td>{$item[1]}</td>
+                <td><i class="ico-{$item[4]}">&nbsp;</i>{$item[3]}</td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    <table class="table">
+        <caption><h2>依赖性</h2></caption>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>类型</th>
+            <th>检查结果</th>
+        </tr>
+        </thead>
+        <tbody>
+            {* PHP扩展检测 *}
+            {foreach $funcs as $item}
+                <tr>
+                    <td>{$item[0]}</td>
+                    <td>{$item[3]}</td>
+                    <td><i class="ico-{$item[2]}">&nbsp;</i>{$item[1]}</td>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    {if $dirfile != false}
+        <table class="table">
+            <caption><h2>目录/文件权限</h2></caption>
+            <thead>
+            <tr>
+                <th>目录/文件</th>
+                <th>所需状态</th>
+                <th>当前状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            {* 目录权限检测 *}
+            {foreach $dirfile as $item}
+            <tr>
+                <td>{$item[3]}</td>
+                <td><i class="ico-success">&nbsp;</i>可写</td>
+                <td><i class="ico-{$item[2]}">&nbsp;</i>{$item[1]}</td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    {/if}
+
+{/block}
+
+{block name="footer"}
+    <a class="btn btn-success btn-large" href="{U url='installer/install/index'}">上一步</a>
+    <a class="btn btn-primary btn-large" href="{U url='installer/install/second'}">下一步</a>
+{/block}

@@ -58,6 +58,50 @@ class SEK {
     }
 
     /**
+     * Remove Invisible Characters
+     * 移除看不见的字符
+     * This prevents sandwiching null characters
+     * between ascii characters, like Java\0script.
+     *
+     * @param	string $str
+     * @param	bool $url_encoded
+     * @return	string
+     */
+    public static function removeInvisibleCharacters($str, $url_encoded = TRUE) {
+        $non_displayables = array(
+            '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S',// 00-08, 11, 12, 14-31, 127
+        );
+        // every control character except newline (dec 10),
+        // carriage return (dec 13) and horizontal tab (dec 09)
+        if ($url_encoded) {
+            $non_displayables[] = '/%0[0-8bcef]/';	// url encoded 00-08, 11, 12, 14, 15
+            $non_displayables[] = '/%1[0-9a-f]/';	// url encoded 16-31
+        }
+
+        do {
+            $str = preg_replace($non_displayables, '', $str, -1, $count);
+        }while ($count);
+        return $str;
+    }
+
+
+    /**
+     * Determines if the current version of PHP is equal to or greater than the supplied value
+     * 判断PHP版本是否大于参数指定的版本
+     * @param	string
+     * @return	bool	TRUE if the current version is $version or higher
+     */
+    public static function isPhp($version) {
+        static $_is_php;
+        $version = (string) $version;
+        if ( ! isset($_is_php[$version])) {
+            $_is_php[$version] = version_compare(PHP_VERSION, $version, '>=');
+        }
+        return $_is_php[$version];
+    }
+
+
+    /**
      * 解析模板位置
      * 测试代码：
     [

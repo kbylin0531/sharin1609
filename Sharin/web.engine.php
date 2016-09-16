@@ -165,7 +165,6 @@ namespace Sharin {
     use Exception;
     use Sharin\Behaviours\StaticCacheBehaviour;
     use Sharin\Core\Configger;
-    use Sharin\Core\Response;
     use Sharin\Core\Trace;
     use Sharin\Exceptions\ParameterInvalidException;
 

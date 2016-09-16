@@ -1,0 +1,479 @@
+{extends file='../../../Common/View/base.html'}
+
+{block name='css'}
+    <link rel="stylesheet" href="{$smarty.const.URL_PUBLIC_PATH}/libs/bootstrap-table/dist/bootstrap-table.css">
+<style>
+    .container_co {
+        padding: 0 5px 0 5px;
+    }
+</style>
+{/block}
+
+{block name='stage'}
+<div class="container_co">
+
+    <div id="toolbar">
+        <div class="form-inline" role="form">
+            <form id="search_form">
+                <div class="form-group">
+                    <span>Offset: </span>
+                    <input name="offset" class="form-control w70" type="number" value="0">
+                </div>
+                <div class="form-group">
+                    <span>Limit: </span>
+                    <input name="limit" class="form-control w70" type="number" value="5">
+                </div>
+                <div class="form-group">
+                    <input name="search" class="form-control" type="text" placeholder="Search">
+                </div>
+                <div class="form-group">
+                    <button id="ok" type="button" class="btn btn-default">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <table id="table"
+               data-toolbar="#toolbar"
+               data-pagination="true"
+               data-page-size="10"
+               data-page-list="[10,20,50]"
+               data-detail-view="true"
+               data-detail-formatter="detailFormatter"
+               data-ajax="ajaxRequest"
+
+
+               data-search="true"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-columns="true"
+                >
+            <thead>
+                <tr>
+                    <th data-checkbox="true" data-formatter="stateFormatter"></th>
+                    <th data-field="name">Name</th>
+                    <th data-field="stargazers_count">Stars</th>
+                    <th data-field="forks_count">Forks</th>
+                    <th data-field="description">Description</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+{/block}
+
+
+{block name='js'}
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/libs/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script src="{$smarty.const.URL_PUBLIC_PATH}/libs/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
+    <script>
+        var data = [
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-table",
+                "stargazers_count": "526",
+                "forks_count": "122",
+                "description": "An extended Bootstrap table with radio, checkbox, sort, pagination, and other added features. (supports twitter bootstrap v2 and v3) "
+            },
+            {
+                "name": "multiple-select",
+                "stargazers_count": "288",
+                "forks_count": "150",
+                "description": "A jQuery plugin to select multiple elements with checkboxes :)"
+            },
+            {
+                "name": "bootstrap-show-password",
+                "stargazers_count": "32",
+                "forks_count": "11",
+                "description": "Show/hide password plugin for twitter bootstrap."
+            }
+        ];
+        //查看详细
+        function detailFormatter(index, row) {
+            var html = [];
+            $.each(row, function (key, value) {
+                html.push('<p><b>' + key + ':'+index+'</b> VALUE:' + value + '</p>');
+            });
+            return html.join('');// 使用join('')可以避免默认的','
+        }
+        function stateFormatter(value, row, index) {
+            if (index === 5) {
+                return {
+                    disabled: true,
+                    checked: true
+                }
+            }
+            return value;
+        }
+
+        //最好的方式是疫情请求返回优先的数据
+        //如百度搜索，你不可能一直翻页到1000页以后的数据
+        //所以每次服务器返回的数据都必须有限,一般认为20页后面的数据用户是不会去查看的
+        //如果需要看到，则需要减小搜索范围
+        function ajaxRequest(params){
+            //设置请求数据
+            console.log(params.data);
+            console.log(params);
+            params.complete({
+                total: Math.random(),
+                rows: [data]
+            });
+        }
+
+
+        $(function () {
+            var table = $('#table');
+            var search_form = $("#search_form");
+            table.bootstrapTable({
+                data:data
+            });
+
+            table.on('page-change.bs.table', function (event, size) {
+                console.log(event, size);
+            });
+
+            $("#ok").click(function () {
+                console.log(search_form.serialize());
+            });
+
+        });
+    </script>
+{/block}
+
+
