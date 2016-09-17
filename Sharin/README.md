@@ -71,3 +71,18 @@ divider - 分割线
      访问如http://localhost/MinShuttler/Public时
        REQUEST_URI : /MinShuttler/Public/
        SCRIPT_NAME : /MinShuttler/Public/index.php
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+Sharingan:
+    24:PHP标准库 (SPL) http://php.net/manual/zh/book.spl.php
+  
+  
