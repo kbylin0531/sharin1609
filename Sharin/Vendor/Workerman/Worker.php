@@ -76,8 +76,7 @@ class Worker
      *
      * @var int
      */
-    const DEFAUL_BACKLOG = 1024;
-
+    const DEFAULT_BACKLOG = 1024;
     /**
      * Max udp package size.
      *
@@ -611,7 +610,7 @@ class Worker
         $master_is_alive = $master_pid && @posix_kill($master_pid, 0);
         // Master is still alive?
         if ($master_is_alive) {
-            if ($command === 'start') {
+            if ($command === 'start' && posix_getpid() != $master_pid) {
                 self::log("Workerman[$start_file] already running");
                 exit;
             }
@@ -723,7 +722,7 @@ class Worker
     }
 
     /**
-     * Signal hander.
+     * Signal handler.
      *
      * @param int $signal
      */
@@ -908,6 +907,7 @@ class Worker
      *
      * @param int $worker_id
      * @param int $pid
+     * @return mixed
      */
     protected static function getId($worker_id, $pid)
     {
@@ -1313,14 +1313,14 @@ class Worker
         self::$_pidMap[$this->workerId]  = array();
 
         // Get autoload root path.
-        $backrace                = debug_backtrace();
-        $this->_autoloadRootPath = dirname($backrace[0]['file']);
+        $backtrace                = debug_backtrace();
+        $this->_autoloadRootPath = dirname($backtrace[0]['file']);
 
         // Context for socket.
         if ($socket_name) {
             $this->_socketName = $socket_name;
             if (!isset($context_option['socket']['backlog'])) {
-                $context_option['socket']['backlog'] = self::DEFAUL_BACKLOG;
+                $context_option['socket']['backlog'] = self::DEFAULT_BACKLOG;
             }
             $this->_context = stream_context_create($context_option);
         }
@@ -1426,7 +1426,7 @@ class Worker
         //Update process state.
         self::$_status = self::STATUS_RUNNING;
 
-        // Eegister shutdown function for checking errors.
+        // Register shutdown function for checking errors.
         register_shutdown_function(array("\\Workerman\\Worker", 'checkErrors'));
 
         // Set autoload root path.
