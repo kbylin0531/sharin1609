@@ -21,7 +21,7 @@ namespace {
         $_SERVER['REQUEST_TIME_FLOAT'],
         memory_get_usage(),
     ];
-    require __DIR__.'/Common/constant.inc';
+    require __DIR__.'/Common/constant.web.inc';
     if(SR_DEBUG_MODE_ON) {
         require __DIR__.'/Common/debug_suit.inc';
         require __DIR__.'/Common/environment.inc';
@@ -48,6 +48,7 @@ namespace {
             'EXCEPTION_CLEAN'   => false,//it will clean the output before if error or exception occur
             'TIMEZONE_ZONE'     => 'Asia/Shanghai',
 
+            'CLASS_LOADER'          => null,//外部的类加载必须兼容ClassLoader::load()
             'ERROR_HANDLER'         => null,
             'EXCEPTION_HANDLER'     => null,
 
@@ -62,7 +63,7 @@ namespace {
         public static function init(array $config=NONE_CONFIG){
             static $needs = true;
             if($needs){//防止重复初始化
-                Developer::import('app_begin',$GLOBALS['webengine_begin']);
+                if(SR_DEBUG_MODE_ON) Developer::import('app_begin',$GLOBALS['webengine_begin']);
                 Behaviour::listen(ON_INIT);
                 $config and self::$config = array_merge(self::$config,$config);
 
@@ -73,13 +74,12 @@ namespace {
                 date_default_timezone_set(self::$config['TIMEZONE_ZONE']) or die('Date default timezone set failed!');
 
                 //behavior
-                spl_autoload_register([ClassLoader::class,'load'],false,true) or die('Faile to register class autoloader!');
+                self::registerClassLoader(self::$config['CLASS_LOADER']);
                 self::registerErrorHandler(self::$config['ERROR_HANDLER']);
                 self::registerExceptionHandler(self::$config['EXCEPTION_HANDLER']);
-
                 register_shutdown_function(function (){/* 脚本结束时将会自动输出，所以不能把输出控制语句放到这里 */
                     Behaviour::listen(ON_SHUTDOWN);
-                    if(SR_PAGE_TRACE_ON and !SR_IS_AJAX ) Developer::trace();//show the trace info
+                    if(SR_PAGE_TRACE_ON and !SR_IS_AJAX) Developer::trace();//show the trace info
                 });
 
                 Behaviour::listen(ON_INITED);
@@ -128,6 +128,14 @@ namespace {
             Behaviour::listen(ON_STOP,[$actionback,[SR_REQUEST_MODULE,SR_REQUEST_CONTROLLER,SR_REQUEST_ACTION]]);
         }
 
+        public static function registerClassLoader(callable $loader=null){
+            if(null === $loader){
+                include_once SR_PATH_FRAMEWORK.'/ClassLoader.class.php';
+                $loader = [ClassLoader::class,'load'];
+            }
+            return spl_autoload_register($loader,false,true);
+        }
+
         /**
          * 注册错误处理函数
          * @param callable|null $handler
@@ -165,7 +173,6 @@ namespace Sharin {
     use Exception;
     use Sharin\Behaviours\StaticCacheBehaviour;
     use Sharin\Core\Configger;
-    use Sharin\Core\Trace;
     use Sharin\Exceptions\ParameterInvalidException;
 
     /**
@@ -266,7 +273,7 @@ namespace Sharin {
                 try{
                     return $clsnm::$method();
                 }catch (\Exception $e){
-                    Developer::trace($e->getMessage());
+                    if(SR_DEBUG_MODE_ON) Developer::trace($e->getMessage());
                 }
             }
             return null;
@@ -375,94 +382,6 @@ namespace Sharin {
     }
 
     /**
-     * Class Developer
-     * Developer tool to improve performance and debug
-     * @package Sharin
-     */
-    final class Developer {
-
-        private static $showTrace = SR_DEBUG_MODE_ON;
-
-        /**
-         * @var array
-         */
-        private static $highlightes = [];
-        /**
-         * @var array
-         */
-        private static $_status = [];
-        /**
-         * @var array
-         */
-        private static $_traces = [];
-
-        /**
-         * Open the page trace
-         * @return void
-         */
-        public static function openTrace(){
-            self::$showTrace = true;
-        }
-
-        /**
-         * Close the page trace
-         * @return void
-         */
-        public static function closeTrace(){
-            self::$showTrace = false;
-        }
-
-        /**
-         * record the runtime's time and memory usage
-         * @param null|string $tag tag of runtime point
-         * @return void
-         */
-        public static function status($tag){
-            SR_DEBUG_MODE_ON and self::$_status[$tag] = [
-                microtime(true),
-                memory_get_usage(),
-            ];
-        }
-
-        /**
-         * import status
-         * @param string $tag
-         * @param array $status
-         */
-        public static function import($tag,array $status){
-            self::$_status[$tag] = $status;
-        }
-
-        /**
-         * 记录下跟踪信息
-         * @param string|mixed $message
-         * @param ...
-         * @return void
-         */
-        public static function trace($message=null){
-            static $index = 0;
-            if(!SR_DEBUG_MODE_ON) return;
-            if(null === $message){
-                self::$showTrace and Trace::show(self::$highlightes,self::$_traces,self::$_status);
-            }else{
-                $location = debug_backtrace();
-                if(isset($location[0])){
-                    $location = "{$location[0]['file']}:{$location[0]['line']}";
-                }else{
-                    $location = $index ++;
-                }
-                if(func_num_args() > 1) $message = var_export(func_get_args(),true);
-                if(!is_string($message)) $message = var_export($message,true);
-                if(isset(self::$_traces[$location])){
-                    $index ++;//it may called multi-times in some place
-                    $location = "$location ($index)";
-                }
-                self::$_traces[$location] = $message;
-            }
-        }
-    }
-
-    /**
      * Class Behaviour
      * 行为控制,各个行为点的结合代表着应用的生命周期
      * @package Sharin
@@ -513,7 +432,7 @@ namespace Sharin {
          * @return void
          */
         public static function listen($tag, $params = null) {
-            SR_DEBUG_MODE_ON and Developer::status($tag);
+            if(SR_DEBUG_MODE_ON) Developer::status($tag);
             if (!empty(self::$tags[$tag])) {
                 foreach(self::$tags[$tag] as $name){
                     if (false === self::exec($name, $tag, $params)) break; // 如果返回false 则中断行为执行
@@ -544,60 +463,6 @@ namespace Sharin {
             }
             throw new ParameterInvalidException($callableorclass,['Closure','string']);
         }
-    }
-
-    /**
-     * Class ClassLoader
-     * manage the class auto-loading and initialization
-     * @package Sharin
-     */
-    final class ClassLoader {
-
-        /**
-         * @var array array of key-valure pairs (name to relative path)
-         */
-        private static $map = [];
-
-        /**
-         * import classes from outer
-         * @param array $map
-         */
-        public static function import(array $map){
-            $map and self::$map = array_merge(self::$map,$map);
-        }
-
-        /**
-         * default loader for this system
-         * @param string $clsnm class name
-         * @return void
-         */
-        public static function load($clsnm){
-            if(isset(self::$map[$clsnm])) {
-                include_once self::$map[$clsnm];
-            }else{
-                $pos = strpos($clsnm,'\\');
-                if(false === $pos){
-                    $file = SR_PATH_BASE . "/{$clsnm}.class.php";//class file place deside entrance file if has none namespace
-                    if(is_file($file)) include_once $file;
-                }else{
-                    $path = SR_PATH_BASE.'/'.str_replace('\\', '/', $clsnm).'.class.php';
-                    if(is_file($path)) include_once self::$map[$clsnm] = $path;
-                }
-            }
-            Utils::callStatic($clsnm,'__initializationize');
-        }
-
-        /**
-         * register class autoloader
-         * @param callable $autoloader
-         * @throws SharinException
-         */
-        public static function register(callable $autoloader){
-            if(!spl_autoload_register($autoloader,false,true)){
-                throw new SharinException('Faile to register class autoloader!');
-            }
-        }
-
     }
 
     /**

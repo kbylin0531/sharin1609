@@ -36,7 +36,7 @@ class EC21Platform extends Platform {
     protected $submitAddress   = 'http://www.ec21.com/global/basic/MyProductEditSubmit.jsp';
     protected $attrs = [
         //必要参数
-        'catalog_nm'=>'My Product',
+        'catalog_nm'=>'',
         'allDesc'=>'',//描述,要求一定字数
         'origin'=>'CN',//商品产地
         'display'=>'Y',//'N'

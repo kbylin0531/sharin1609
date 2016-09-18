@@ -72,17 +72,7 @@ divider - 分割线
        REQUEST_URI : /MinShuttler/Public/
        SCRIPT_NAME : /MinShuttler/Public/index.php
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 Sharingan:
     24:PHP标准库 (SPL) http://php.net/manual/zh/book.spl.php
-  
-  
+    25:Vendor与Plugins都引用了第三方的库，区别时Plugin对原先的库作了修改
+    26:Sharin目录下的类都是可以内置到lite文件中的
