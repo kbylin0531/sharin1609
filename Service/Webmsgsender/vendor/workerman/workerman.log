@@ -1,0 +1,80 @@
+2016-09-19 06:08:43 Workerman[../Sharin/service.module] start in DEBUG mode
+2016-09-19 06:08:56 Workerman[service.module] Stopping ...
+2016-09-19 06:08:56 Workerman[service.module] has been stopped
+2016-09-19 06:10:29 Workerman[../Sharin/service.module] start in DEBUG mode
+2016-09-19 06:10:44 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:44 worker[PHPSocketIO:7330] exit with status 65280
+2016-09-19 06:10:45 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:45 worker[PHPSocketIO:7361] exit with status 65280
+2016-09-19 06:10:46 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:46 worker[PHPSocketIO:7362] exit with status 65280
+2016-09-19 06:10:48 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:48 worker[PHPSocketIO:7363] exit with status 65280
+2016-09-19 06:10:49 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:49 worker[PHPSocketIO:7364] exit with status 65280
+2016-09-19 06:10:51 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:51 worker[PHPSocketIO:7365] exit with status 65280
+2016-09-19 06:10:52 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:52 worker[PHPSocketIO:7366] exit with status 65280
+2016-09-19 06:10:54 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:54 worker[PHPSocketIO:7368] exit with status 65280
+2016-09-19 06:10:55 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:55 worker[PHPSocketIO:7374] exit with status 65280
+2016-09-19 06:10:57 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:57 worker[PHPSocketIO:7375] exit with status 65280
+2016-09-19 06:10:59 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:10:59 worker[PHPSocketIO:7376] exit with status 65280
+2016-09-19 06:11:01 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:01 worker[PHPSocketIO:7377] exit with status 65280
+2016-09-19 06:11:02 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:02 worker[PHPSocketIO:7391] exit with status 65280
+2016-09-19 06:11:03 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:03 worker[PHPSocketIO:7392] exit with status 65280
+2016-09-19 06:11:04 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:04 worker[PHPSocketIO:7395] exit with status 65280
+2016-09-19 06:11:05 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:06 worker[PHPSocketIO:7396] exit with status 65280
+2016-09-19 06:11:07 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:07 worker[PHPSocketIO:7397] exit with status 65280
+2016-09-19 06:11:08 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:08 worker[PHPSocketIO:7400] exit with status 65280
+2016-09-19 06:11:09 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:09 worker[PHPSocketIO:7404] exit with status 65280
+2016-09-19 06:11:11 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:11 worker[PHPSocketIO:7406] exit with status 65280
+2016-09-19 06:11:12 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:12 worker[PHPSocketIO:7407] exit with status 65280
+2016-09-19 06:11:14 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:14 worker[PHPSocketIO:7408] exit with status 65280
+2016-09-19 06:11:16 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:16 worker[PHPSocketIO:7409] exit with status 65280
+2016-09-19 06:11:18 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:18 worker[PHPSocketIO:7413] exit with status 65280
+2016-09-19 06:11:20 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:20 worker[PHPSocketIO:7416] exit with status 65280
+2016-09-19 06:11:21 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:21 worker[PHPSocketIO:7417] exit with status 65280
+2016-09-19 06:11:23 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:23 worker[PHPSocketIO:7418] exit with status 65280
+2016-09-19 06:11:24 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:24 worker[PHPSocketIO:7434] exit with status 65280
+2016-09-19 06:11:26 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:11:26 worker[PHPSocketIO:7435] exit with status 65280
+2016-09-19 06:11:26 Workerman[service.module] Stopping ...
+2016-09-19 06:11:26 Workerman[service.module] has been stopped
+2016-09-19 06:12:24 Workerman[../Sharin/service.module] start in DEBUG mode
+2016-09-19 06:12:28 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:12:28 worker[PHPSocketIO:7496] exit with status 65280
+2016-09-19 06:12:30 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:12:30 worker[PHPSocketIO:7522] exit with status 65280
+2016-09-19 06:12:31 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:12:31 worker[PHPSocketIO:7523] exit with status 65280
+2016-09-19 06:12:33 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:12:33 worker[PHPSocketIO:7532] exit with status 65280
+2016-09-19 06:12:34 WORKER EXIT UNEXPECTED E_ERROR Call to a member function emit() on null in /home/asus/workspace/sharin2/Service/Webmsgsender/start.php on line 114
+2016-09-19 06:12:34 worker[PHPSocketIO:7535] exit with status 65280
+2016-09-19 06:12:35 Workerman[service.module] Stopping ...
+2016-09-19 06:12:35 Workerman[service.module] has been stopped
+2016-09-19 06:13:39 Workerman[../Sharin/service.module] start in DEBUG mode
+2016-09-19 06:14:08 Workerman[service.module] Stopping ...
+2016-09-19 06:14:08 Workerman[service.module] has been stopped

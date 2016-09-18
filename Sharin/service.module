@@ -74,9 +74,9 @@ namespace {
     }
 
     /**
-     * Class Server
+     * Class Service
      */
-    final class Server {
+    final class Service {
         /**
          * @var Worker[]
          */
@@ -105,7 +105,7 @@ namespace {
             if(is_file($entry)){
                 include $entry;
             }else{
-                die("Server script '$entry' is not a file!\n");
+                die("Service script '$entry' is not a file!\n");
             }
         }
 
@@ -140,7 +140,7 @@ namespace {
          */
         public static function checkEnv(){
             global $argv;
-            //补充server.php占据的位置
+            //补充service.php占据的位置
             if(isset($argv[2])){
                 $argv[1] = $argv[2];
                 echo "ARG-1:{$argv[1]} \n";
@@ -164,14 +164,14 @@ namespace {
 
 
     //开启脚本
-    $appname = Server::arg(1);
+    $appname = Service::arg(1);
     if(!$appname){
-        die("Please run as 'php server.php [APPLICATION_NAME] [ACTION_NAME]'!\n");
+        die("Please run as 'php service.php [APPLICATION_NAME] [ACTION_NAME]'!\n");
     }
     define('SR_APP_NAME', ucfirst($appname));
-    define('SR_PATH_APP', SR_PATH_SERVER.DIRECTORY_SEPARATOR.SR_APP_NAME);
+    define('SR_PATH_APP', SR_PATH_SERVICE.DIRECTORY_SEPARATOR.SR_APP_NAME);
     spl_autoload_register([Autoloader::class,'loadByNamespace']);
-    if($error = Server::checkEnv()) die($error);
-    Server::start();
+    if($error = Service::checkEnv()) die($error);
+    Service::start();
 
 }

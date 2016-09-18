@@ -35,3 +35,29 @@
 2016-09-18 17:27:40 pid:23549 Workerman[../Sharin/server.module] start in DEBUG mode
 2016-09-18 17:33:20 pid:23549 Workerman[server.module] Stopping ...
 2016-09-18 17:33:20 pid:23549 Workerman[server.module] has been stopped
+2016-09-18 21:47:16 pid:5837 Workerman[Sharin/service.module] start in DEBUG mode
+2016-09-18 21:47:16 pid:5837 Warning: You must have the root privileges to change uid and gid.
+2016-09-18 21:47:16 pid:5838 Warning: change gid or uid fail.
+2016-09-18 21:47:48 pid:5837 Workerman[service.module] Stopping ...
+2016-09-18 21:47:48 pid:5837 Workerman[service.module] has been stopped
+2016-09-19 05:49:38 pid:5937 Workerman[Sharin/service.module] start in DEBUG mode
+2016-09-19 05:49:38 pid:5937 Warning: You must have the root privileges to change uid and gid.
+2016-09-19 05:49:38 pid:5938 Warning: change gid or uid fail.
+2016-09-19 05:50:16 pid:5937 Workerman[service.module] Stopping ...
+2016-09-19 05:50:16 pid:5937 Workerman[service.module] has been stopped
+2016-09-19 05:50:19 pid:5980 Workerman[Sharin/service.module] start in DAEMON mode
+2016-09-19 05:50:19 pid:5982 Warning: You must have the root privileges to change uid and gid.
+2016-09-19 05:50:19 pid:5983 Warning: change gid or uid fail.
+2016-09-19 05:53:14 pid:6611 Workerman[Sharin/service.module] start in DAEMON mode
+2016-09-19 05:53:14 pid:6611 Workerman[Sharin/service.module] already running
+2016-09-19 05:53:24 pid:6612 Workerman[Sharin/service.module] sttop 
+2016-09-19 05:53:26 pid:6613 Workerman[Sharin/service.module] stop 
+2016-09-19 05:53:26 pid:6613 Workerman[Sharin/service.module] is stoping ...
+2016-09-19 05:53:26 pid:5982 Workerman[service.module] Stopping ...
+2016-09-19 05:53:26 pid:5982 Workerman[service.module] has been stopped
+2016-09-19 05:53:26 pid:6613 Workerman[Sharin/service.module] stop success
+2016-09-19 05:53:35 pid:6614 Workerman[Sharin/service.module] start in DEBUG mode
+2016-09-19 05:53:35 pid:6614 Warning: You must have the root privileges to change uid and gid.
+2016-09-19 05:53:35 pid:6615 Warning: change gid or uid fail.
+2016-09-19 05:57:12 pid:6614 Workerman[service.module] Stopping ...
+2016-09-19 05:57:12 pid:6614 Workerman[service.module] has been stopped

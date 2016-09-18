@@ -35,7 +35,7 @@ const ACTION_DELETE = 3;//删除操作,将使用到$_where字段
 const DS = DIRECTORY_SEPARATOR;
 
 define('SR_PATH_BASE', dirname(dirname(__DIR__)));
-const SR_PATH_SERVER    = SR_PATH_BASE.'/Server';
+const SR_PATH_SERVICE   = SR_PATH_BASE.'/Service';
 const SR_PATH_FRAMEWORK = SR_PATH_BASE.'/Sharin';
 const SR_PATH_CONFIG    = SR_PATH_BASE.'/Config';
 const SR_PATH_RUNTIME   = SR_PATH_BASE.'/Runtime';
