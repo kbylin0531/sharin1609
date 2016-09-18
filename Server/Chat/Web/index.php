@@ -34,7 +34,7 @@
            ws.send(login_data);
        };
        // 当有消息时根据消息类型显示不同信息,服务端发来消息时
-       ws.onmessage = function () {
+       ws.onmessage = function (e) {
            console.log(e.data);
            var data = eval("("+e.data+")");
            switch(data['type']){

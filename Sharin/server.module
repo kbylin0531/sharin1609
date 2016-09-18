@@ -59,7 +59,19 @@ namespace {
     use Workerman\WebServer;
 
     if(PHP_SAPI !== 'cli') die('Please run as client mode!');
-    include 'Sharin/console.engine.php';
+
+    require __DIR__.'/Common/constant.console.inc';
+
+    require __DIR__.'/Common/environment.inc';
+
+    //error  display
+    if(SR_DEBUG_MODE_ON){
+        error_reporting(-1);
+        ini_set('display_errors',1);
+    }else{
+        error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);//php5.3version use code: error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_USER_NOTICE);
+        ini_set('display_errors', 0);
+    }
 
     /**
      * Class Server
@@ -151,7 +163,6 @@ namespace {
     }
 
 
-
     //开启脚本
     $appname = Server::arg(1);
     if(!$appname){
@@ -164,4 +175,3 @@ namespace {
     Server::start();
 
 }
-

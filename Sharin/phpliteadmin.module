@@ -1,0 +1,20 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: lich4ung
+ * Date: 9/18/16
+ * Time: 5:11 PM
+ */
+
+define('SR_PATH_BASE',dirname(__DIR__).'/');
+$outerconf = SR_PATH_BASE.'Config/plugins/phpliteadmin.php';
+if(is_file($outerconf)){
+    include_once $outerconf;
+}else{
+    //default config
+    $GLOBALS['lite_admin_theme'] = 'Sheep';
+    $GLOBALS['lite_admin_database'] = SR_PATH_BASE.'/Data';
+}
+
+chdir(SR_PATH_BASE.'/Sharin/Plugins/phpliteadmin/');
+include 'phpliteadmin.php';

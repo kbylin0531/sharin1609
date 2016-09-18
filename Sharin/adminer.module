@@ -1,0 +1,5 @@
+<?php
+
+define('SR_PATH_BASE',dirname(__DIR__).'/');
+chdir(SR_PATH_BASE.'/Vendor/adminer/');
+include 'index.php';
