@@ -1,0 +1,21 @@
+<div>
+    <ul class="nav nav-tabs">
+        <li><a href="<?php echo $baseurl;?>/category/index?type=1">DiyTrade</a></li>
+    </ul>
+    <script>
+        var code = "<?php echo $pcode;?>";
+        $(function () {
+            //样式显示
+            var lias = $("ul.nav-tabs>li>a");
+            var str = "/category/index?type="+code;
+            for(var i = 0; i < lias.length; i ++){
+                var a = lias.eq(i);
+                console.log(a,a.attr("href"));
+                var src = a.attr("href");
+                if(src && (src.indexOf(str) != -1)){
+                    a.parent("li").addClass("active");
+                }
+            }
+        });
+    </script>
+</div>

@@ -84,12 +84,13 @@
      * get position
      * @returns {string}
      */
-    var gP = function () {
+    var _gP = function () {
         if(!options.position){
             //get the position of this file
             var scripts = document.getElementsByTagName("script");
             for(var x in scripts){
-                var script = scripts[x];
+                if(!scripts.hasOwnProperty(x)) continue;
+                var script = scripts.g[x];
                 if(script.src && (script.src.indexOf("/L.js") > 0)){
                     options.position = script.src.replace("/L.js","/");
                     break;
@@ -261,7 +262,7 @@
         viewport: function () {
             var win = window;
             var type = 'inner';
-            if (!('innerWidth' in window)) {
+            if (!('innerWidth' in win)) {
                 type = 'client';
                 win = document.documentElement ? document.documentElement : document.body;
             }
@@ -302,31 +303,6 @@
         ie: function () {/* get the version of ie */
             var info = this.getBrowser();
             return info.type === "ie"?info.version:11;
-        },
-        /**
-         * 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符,年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
-         * @param fmt
-         * @returns {*}
-         */
-        date: function (fmt) { //author: meizz
-            if (!fmt) fmt = "yyyy-MM-dd hh:mm:ss.S";//2006-07-02 08:09:04.423
-            var o = {
-                "M+": this.getMonth() + 1,                 //月份
-                "d+": this.getDate(),                    //日
-                "h+": this.getHours(),                   //小时
-                "m+": this.getMinutes(),                 //分
-                "s+": this.getSeconds(),                 //秒
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                "S": this.getMilliseconds()             //毫秒
-            };
-            if (/(y+)/.test(fmt))
-                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o) {
-                if (!o.hasOwnProperty(k)) continue;
-                if (new RegExp("(" + k + ")").test(fmt))
-                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            }
-            return fmt;
         }
     };
     /**
@@ -511,17 +487,10 @@
         getRstype:function (path) {/* 获取资源类型 */
             var type = path.substring(path.length - 3);
             switch (type) {
-                case 'css':
-                    type = 'css';
-                    break;
-                case '.js':
-                    type = 'js';
-                    break;
-                case 'ico':
-                    type = 'ico';
-                    break;
-                default:
-                    throw "wrong type'" + t + "',it must be[css,js,ico]";
+                case 'css': type = 'css'; break;
+                case '.js': type = 'js'; break;
+                case 'ico': type = 'ico'; break;
+                default: throw "wrong type'" + t + "',it must be[css,js,ico]";
             }
             return type;
         },
@@ -532,8 +501,16 @@
          * @returns {L}
          */
         use:function (module,call) {
-            var scr = gP()+"L/"+module+".js";
-            this.load(scr,'js',call);
+            if(!L.O.isArr(module)){
+                module = [module];
+            }else if(L.O.isStr(module) && (module.indexOf(",") > 0)){
+                module = module.split(",");
+            }
+            L.U.each(module,function (m) {
+                var scr = _gP()+"L";
+                if(m.indexOf("/")!=0) scr += "/";
+                this.load(scr+m,'js',call);
+            });
             return this;
         },
         /**
@@ -594,7 +571,7 @@
             return this;
         },
         /*  name : div#maindv.hello,justr or div#maindv.hello.justr (class attr is behind the id and id is behind the tagname) */
-        newEle:function (name,opts,ih) {
+        newEle:function (name,attrs,ih) {
             var clses, id;
             if (name.indexOf('.') > 0) {
                 clses = name.split(".");
@@ -616,7 +593,7 @@
                 el.setAttribute('class', ct);
             }
 
-            opts && U.each(opts,function (v,k) {
+            attrs && U.each(attrs,function (v,k) {
                 el[k] = v;
             });
             if (ih) el.innerHTML = ih;
@@ -675,40 +652,6 @@
         U: U,//utils
         D: D,//dom
         O: O,
-        /**
-         * new element
-         * @param exp express
-         * @param ih innerHTML
-         * @returns {Element}
-         * @constructor
-         */
-        NE: function (exp, ih) {
-            var tagname = exp, clses, id;
-            if (exp.indexOf('.') > 0) {
-                clses = exp.split(".");
-                exp = clses.shift();
-            }
-            if (exp.indexOf("#") > 0) {
-                var tempid = exp.split("#");
-                tagname = tempid[0];
-                id = tempid[1];
-            } else {
-                tagname = exp
-            }
-
-            var element = document.createElement(tagname);
-            id && element.setAttribute('id', id);
-            if (clses) {
-                var ct = '';
-                for (var i = 0; i < clses.length; i++) {
-                    ct += clses[i];
-                    if (i !== clses.length - 1)  ct += ",";
-                }
-                element.setAttribute('class', ct);
-            }
-            if (ih) element.innerHTML = ih;
-            return element;
-        },//新建一个DOM元素
         //new self
         NS: function (context) {
             var Y = function () {
